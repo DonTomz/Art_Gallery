@@ -1,0 +1,159 @@
+.modal-overlay {
+    position:relative;
+    /* top: 300px; */
+    left: 500px;
+    right: 50%;
+    width: 50%;
+    height: 50%;
+    /* background-color: rgba(254, 254, 254, 0); */
+    /* display:inline-block; */
+    /* flex-direction: column; */
+    /* justify-content: center; */
+    align-items: center;
+    z-index: 1000;
+    border-radius: 15px;
+  }
+  
+/*   
+  .modal-title {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    padding-top: 20px;
+    font-size: 2rem;
+    color: rgb(234, 15, 15);
+  } */
+  
+  .modal-box {
+    display: flex;
+    overflow: hidden;
+    min-height: auto;
+    min-width: 400px;
+    width: auto;
+    background: url('E:\Projects\new one\src\images\Register_Image.jpeg') no-repeat center center/cover;
+    padding: 20px;
+    border-radius: 15px;
+  }
+  
+  .modal-left, .modal-right {
+    padding: 30px;
+    flex: 1;
+    color: white;
+    backdrop-filter: blur(10px);
+    display:flex;
+    flex-direction: column;
+    min-width: 350px;
+    /* min-height:200px; */
+   
+  }
+  
+  .modal-left {
+    background: rgba(0, 0, 0, 0.5);
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+  }
+
+  .modal-right {
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    }
+  
+  .modal-left h2 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+  }
+  
+  .modal-left form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .modal-left input {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .modal-left button {
+    padding: 10px;
+    margin: 10px 0;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+  }
+  
+  .modal-left button:hover {
+    background-color: #333;
+  }
+  
+  .google-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    margin-top: 10px;
+  }
+  
+  .google-logo {
+    font-size: 1.5rem;
+    margin-right: 10px;
+  }
+  
+  .modal-right h2 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+  }
+  
+  .modal-right p {
+    margin-bottom: 20px;
+  }
+  
+  .modal-right button {
+    padding: 10px 20px;
+    background-color: black;
+    color: rgb(252, 248, 248);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal-right button:hover {
+    background-color: #333;
+  }
+  
+  .role-toggle {
+    display: flex;
+    margin-bottom: 20px;
+  }
+  
+  .toggle-btn {
+    flex: 1;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .toggle-btn.active {
+    background-color: black;
+    color: white;
+  }
+
+  .close-button{
+    color: rgb(255, 247, 247);
+    position: relative;
+    top:30px;
+    left:350px;
+  }
+  
