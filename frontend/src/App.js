@@ -28,8 +28,8 @@ function App() {
           <Route path="/contact" element={<Contact />} />
         </Routes>
         <Footer />
-        <Login show={showLoginModal} handleClose={closeLoginModal} />
-        <Register show={showRegisterModal} handleClose={closeRegisterModal} /> 
+        <Login show={showLoginModal} handleClose={closeLoginModal} openRegisterModal={openRegisterModal} />
+        <Register show={showRegisterModal} handleClose={closeRegisterModal} openLoginModal={openLoginModal} /> 
       </Router>
     </div>
   );

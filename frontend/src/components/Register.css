@@ -37,6 +37,11 @@
   justify-content: center;
   align-items: center;
   width: 100%;
+  background-image:url('E:\Projects\Art_Gallery\frontend\src\images\Register_Image.jpeg') ;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border-radius:20px;
 }
 
 .signup-box {
