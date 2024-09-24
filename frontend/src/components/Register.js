@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import './Register.css';
 // import Login from './Login';
-import { FcGoogle } from "react-icons/fc";
-import axios from 'axios'; // Import axios for API requests
+// import { FcGoogle } from "react-icons/fc";
+// import axios from 'axios'; // Import axios for API requests
 
 function Register({ show, handleClose, openLoginModal }) {
   const [isArtist, setIsArtist] = useState(false); 
@@ -45,6 +45,8 @@ function Register({ show, handleClose, openLoginModal }) {
     // Handle successful registration
     alert('Registration successful!');
     console.log(data);
+    handleClose();
+
 
     return data;
   };
@@ -71,6 +73,7 @@ function Register({ show, handleClose, openLoginModal }) {
                   value={formData.fullName}
                   onChange={handleChange}
                   required
+                  className='text-black'
                 />
                 <input
                   type="email"
@@ -79,6 +82,8 @@ function Register({ show, handleClose, openLoginModal }) {
                   value={formData.email}
                   onChange={handleChange}
                   required
+                  className='text-black'
+
                 />
                 <input
                   type="password"
@@ -87,14 +92,16 @@ function Register({ show, handleClose, openLoginModal }) {
                   value={formData.password}
                   onChange={handleChange}
                   required
+                  className='text-black'
+
                 />
                 <button type="submit" >Sign Up</button> {/* This is the correct submission button */}
-                <button className="google-login">
+                {/* <button className="google-login">
                   <div className="google-logo">
                     <FcGoogle />
                   </div>
                   Sign up with Google
-                </button>
+                </button> */}
               </form>
             </div>
             <div className="signup-right">

@@ -7,6 +7,9 @@ import About from './components/About';
 import Contact from './components/Contact';
 import Login from './components/Login';
 import Register from './components/Register'; 
+import Users from './components/Usersi/Users';
+import Painting from './pages/Painting';
+
 
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -21,12 +24,17 @@ function App() {
   return (
     <div className="App">
       <Router>
+        <main className='min-h-[calc(100vh-10px)]  '>
+
         <Header openModal={openLoginModal} openRegisterModal={openRegisterModal} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/user" element={<Users/>}/>
+          <Route path="/paint" element={<Painting/>}/>
         </Routes>
+        </main>
         <Footer />
         <Login show={showLoginModal} handleClose={closeLoginModal} openRegisterModal={openRegisterModal} />
         <Register show={showRegisterModal} handleClose={closeRegisterModal} openLoginModal={openLoginModal} /> 

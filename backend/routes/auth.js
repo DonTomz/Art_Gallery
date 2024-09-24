@@ -80,4 +80,18 @@ router.post('/login', async (req, res) => {
   }
 });
 
+
+router.get('/user/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id); // Find user by ID
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    // Send back only the username (or other data)
+    res.status(200).json({ username: user.username });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;

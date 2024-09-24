@@ -37,9 +37,16 @@
 
 // export default Home;
 
-
 import React from 'react';
 import './Home.css';
+import sunsetImage from '../images/sunset.jpeg';
+import sculptureImg from '../images/sculpture.jpg';
+import digitalImg from '../images/digital.jpeg';
+import reflectionImg from '../images/reflection.jpeg';
+import rsculptureImg from '../images/rsculpture.jpeg';
+import vrImg from '../images/vr.jpeg';
+import ujImg from '../images/jungle.jpeg';
+import dreamImg from '../images/dream.jpeg';
 
 function Home() {
   const sampleArtworks = [
@@ -48,7 +55,7 @@ function Home() {
       artist: "Jane Doe",
       description: "A serene sunset over the ocean, with soft colors blending in the sky.",
       price: "200",
-      imageUrl: "E:\Projects\Art_Gallery\frontend\src\images\sunset.jpeg",
+      imageUrl: sunsetImage, 
       category: "painting",
     },
     {
@@ -56,7 +63,7 @@ function Home() {
       artist: "John Smith",
       description: "A contemporary sculpture with abstract shapes.",
       price: "500",
-      imageUrl: "https://example.com/sculpture.jpg",
+      imageUrl: sculptureImg,
       category: "sculpture",
     },
     {
@@ -64,7 +71,47 @@ function Home() {
       artist: "Alice Art",
       description: "A digital artwork featuring futuristic themes and vibrant colors.",
       price: "300",
-      imageUrl: "https://example.com/digital.jpg",
+      imageUrl: digitalImg,
+      category: "digital art",
+    },
+    {
+      title: "Abstract Reflection",
+      artist: "Mark Rivers",
+      description: "An abstract painting featuring reflective surfaces and geometric patterns.",
+      price: "450",
+      imageUrl: reflectionImg,
+      category: "abstract",
+    },
+    {
+      title: "Rustic Sculpture",
+      artist: "Lucas Greene",
+      description: "A rustic, handcrafted sculpture made from reclaimed wood and metal.",
+      price: "600",
+      imageUrl: rsculptureImg,
+      category: "sculpture",
+    },
+    {
+      title: "Virtual Reality",
+      artist: "Sophia Chang",
+      description: "A digital artwork exploring virtual spaces and futuristic designs.",
+      price: "400",
+      imageUrl: vrImg,
+      category: "digital art",
+    },
+    {
+      title: "Urban Jungle",
+      artist: "David Lee",
+      description: "An urban street sculpture that mixes nature and industrial elements.",
+      price: "700",
+      imageUrl: ujImg ,
+      category: "sculpture",
+    },
+    {
+      title: "Galaxy Dreams",
+      artist: "Lily Moon",
+      description: "A vibrant digital art piece inspired by galaxies and cosmic wonders.",
+      price: "380",
+      imageUrl: dreamImg,
       category: "digital art",
     },
   ];
