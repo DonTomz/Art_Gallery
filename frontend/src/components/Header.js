@@ -46,8 +46,8 @@ const Header = ({ openModal, openRegisterModal }) => {
           ) : (
             <div>
               <span className="login-link" onClick={openModal}>Log In</span>
-              <span>|</span>
-              <span className="register-link" onClick={openRegisterModal}>Register</span>
+              <span> | </span>
+              <span className="register-link text-" onClick={openRegisterModal}>Register</span>
             </div>
           )}
         </div>

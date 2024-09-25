@@ -78,12 +78,6 @@ function Login({ show, handleClose, openRegisterModal }) {
 
                 />
                 <button type="submit">Login</button>
-                {/* <button className="google-login">
-                  <div className="google-logo">
-                    <FcGoogle />
-                  </div>
-                  Sign in with Google
-                </button> */}
                 <div className='google-login'>
                 <GoogleLogin
                     onSuccess={credentialResponse => {
