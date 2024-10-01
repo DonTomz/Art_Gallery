@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate } from 'react-router-dom';
 import './Header.css';
 
 const Header = ({ openModal, openRegisterModal }) => {
   const [username, setUsername] = useState(null);
+  const navigate =useNavigate()
 
   // Fetch the logged-in username from localStorage when the component mounts
   useEffect(() => {
@@ -20,6 +21,8 @@ const Header = ({ openModal, openRegisterModal }) => {
   const handleLogout = () => {
     localStorage.removeItem('username');
     setUsername(null);
+    navigate('/')
+
     // Optionally, you can also navigate to the homepage or login page after logout
   };
 
@@ -45,14 +48,14 @@ const Header = ({ openModal, openRegisterModal }) => {
         <div className="auth-links">
           {username ? (
             <div>
-              <span className="user-greet">{username}</span>
+              <span className="user-greet" >{username}  </span>
               <span className="logout-link" onClick={handleLogout}>Logout</span>
             </div>
           ) : (
             <div>
               <span className="login-link" onClick={openModal}>Log In</span>
               <span> | </span>
-              <span className="register-link text-" onClick={openRegisterModal}>Register</span>
+              <span className="register-link-text" onClick={openRegisterModal}>Register</span>
             </div>
           )}
         </div>

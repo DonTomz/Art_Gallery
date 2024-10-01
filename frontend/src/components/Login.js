@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Import axios for making API requests
+import axios from 'axios'; 
 import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode'; // Ensure correct import for jwtDecode
-
+import { jwtDecode } from 'jwt-decode'; 
 function Login({ show, handleClose, openRegisterModal }) {
   const navigate = useNavigate(); 
   const [formData, setFormData] = useState({
@@ -29,18 +28,19 @@ function Login({ show, handleClose, openRegisterModal }) {
         email: formData.email,
         password: formData.password
       });
-  
+      console.log(response)
       if (response.status === 200) {
         // Store token and user info after successful login
         localStorage.setItem('authToken', response.data.token); 
-        localStorage.setItem('username', response.data.username);  // Store the username
-        localStorage.setItem('userId', response.data.userId);  // Store the user ID
+        localStorage.setItem('username', response.data.username); 
+        localStorage.setItem('userId', response.data.userId);  
+
   
-        handleClose();  // Close the modal after successful login
-        navigate('/user/');  // Redirect to user page
+        handleClose();  
+        navigate('/user/');  
         setTimeout(() => {
-          window.location.reload(); // Reload the page
-        }, 500);  // Delay before reloading
+          window.location.reload(); 
+        }, 500); 
       } else {
         alert('Invalid email or password. Please try again.');
       }
@@ -64,13 +64,13 @@ function Login({ show, handleClose, openRegisterModal }) {
       if (response.status === 200) {
         // Store token and user info after successful login
         localStorage.setItem('authToken', response.data.token); 
-        localStorage.setItem('username', response.data.username);  // Store the username
-        localStorage.setItem('userId', response.data.userId);  // Store the user ID
+        localStorage.setItem('username', response.data.username);  
+        localStorage.setItem('userId', response.data.userId);  
   
-        handleClose();  // Close the modal after successful login
-        navigate('/user');  // Redirect to user page
+        handleClose();  
+        navigate('/user');  
         setTimeout(() => {
-          window.location.reload(); // Reload the page
+          window.location.reload();
         }, 500);  // Delay before reloading
       } else {
         alert('Google login failed. Please try again.');

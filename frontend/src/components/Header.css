@@ -73,7 +73,7 @@
     padding: 2px 6px;
     border-radius: 50%;
   }
-  .login-link {
+  .login-link, .user-greet, .register-link-text {
     text-decoration: none;
     color: #000;
     font-weight: 500;

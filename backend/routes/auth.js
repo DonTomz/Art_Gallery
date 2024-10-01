@@ -91,9 +91,10 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
-
     // Return the JWT token
-    return res.status(200).json({ token });
+    const userId = user._id
+    const username = user.username
+    return res.status(200).json({ token, userId, username});
   } catch (error) {
     console.error('Error during login:', error); // Debug: Log any errors during login
     return res.status(500).json({ message: 'Server error' });
@@ -108,7 +109,7 @@ router.get('/user/:id', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
     // Send back only the username (or other data)
-    res.status(200).json({ username: user.username });
+    res.status(200).json({ username: user.username});
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -148,7 +149,7 @@ router.post('/api/auth/google-login', async (req, res) => {
     const authToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
-    res.status(200).json({ token: authToken, username: user.username, userId: user._id });
+    res.status(200).json({ token: authToken, username: user.username });
     
   } catch (error) {
     console.error('Google login error:', error);
