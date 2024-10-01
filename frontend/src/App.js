@@ -9,6 +9,7 @@ import Login from './components/Login';
 import Register from './components/Register'; 
 import Users from './components/Usersi/Users';
 import Painting from './pages/Painting';
+import AddArtwork from './components/AddArtwork';
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/user" element={<Users/>}/>
           <Route path="/paint" element={<Painting/>}/>
+          <Route path="/add-artwork" element={<AddArtwork />} />
         </Routes>
         </main>
         <Footer />

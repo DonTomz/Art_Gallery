@@ -13,6 +13,9 @@ const Header = ({ openModal, openRegisterModal }) => {
     }
   }, []);
 
+
+
+
   // Logout function to clear localStorage and update the state
   const handleLogout = () => {
     localStorage.removeItem('username');
@@ -35,12 +38,14 @@ const Header = ({ openModal, openRegisterModal }) => {
           <li><Link to="/drawings">Drawings</Link></li>
           <li><Link to="/prints">Prints</Link></li>
           <li><Link to="/inspiration">Inspiration</Link></li>
+          <li><Link to="/add-artwork">Add Artwork</Link> {/* New link */}</li>
         </ul>
       </nav>
       <div className="header-right">
         <div className="auth-links">
           {username ? (
             <div>
+              <span className="user-greet">{username}</span>
               <span className="logout-link" onClick={handleLogout}>Logout</span>
             </div>
           ) : (

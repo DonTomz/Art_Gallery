@@ -1,27 +1,25 @@
 const express = require('express');
-const Artwork = require('../models/Artwork');
-
 const router = express.Router();
+const Artwork = require('../models/Artwork'); // Assuming you've defined the Artwork model
 
-// POST route to add artwork
-router.post('/add-artwork', async (req, res) => {
-  const { title, artist, description, price, imageUrl, category } = req.body;
-
+// Add new artwork
+router.post('/', async (req, res) => {
+  const { title, artist, description, price, category, imageUrl } = req.body;
+  
   try {
     const newArtwork = new Artwork({
       title,
       artist,
       description,
       price,
-      imageUrl,
       category,
-      availability: true,  // Default is available
+      imageUrl,
     });
     
-    await newArtwork.save();
-    res.status(201).json(newArtwork);
+    const savedArtwork = await newArtwork.save();
+    res.status(201).json(savedArtwork);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to add artwork', error });
+    res.status(500).json({ message: 'Error adding artwork', error });
   }
 });
 

@@ -6,7 +6,8 @@ function Register({ show, handleClose, openLoginModal }) {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    password: ''
+    password: '',
+    role: 'User'  // Add role to formData
   });
 
   const [formErrors, setFormErrors] = useState({
@@ -19,8 +20,13 @@ function Register({ show, handleClose, openLoginModal }) {
 
   if (!show) return null;
 
+  // Toggle role between User and Artist
   const toggleRole = () => {
     setIsArtist(!isArtist);
+    setFormData({
+      ...formData,
+      role: isArtist ? 'User' : 'Artist'  // Toggle between 'User' and 'Artist'
+    });
   };
 
   const handleChange = (e) => {
@@ -34,50 +40,72 @@ function Register({ show, handleClose, openLoginModal }) {
     validateField(name, value);
   };
 
-  // Validation logic for each field
-  const validateField = (name, value) => {
-    let errors = { ...formErrors };
+ // Validation logic for each field
+const validateField = (name, value) => {
+  let errors = { ...formErrors };
 
-    switch (name) {
-      case 'username':
-        errors.username = value.length >= 3 ? '' : 'Username must be at least 3 characters long';
-        break;
-      case 'email':
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        errors.email = emailRegex.test(value) ? '' : 'Invalid email address';
-        break;
-      case 'password':
-        errors.password = value.length >= 6 ? '' : 'Password must be at least 6 characters long';
-        break;
-      default:
-        break;
-    }
+  switch (name) {
+    case 'username':
+      // Username must start with an alphabet and be at least 3 characters long
+      const usernameRegex = /^[A-Za-z][A-Za-z0-9_]*$/;
+      if (value.length < 3) {
+        errors.username = 'Username must be at least 3 characters long';
+      } else if (!usernameRegex.test(value)) {
+        errors.username = 'Username must start with an alphabet and contain only letters, numbers, or underscores';
+      } else {
+        errors.username = '';
+      }
+      break;
 
-    setFormErrors(errors);
+    case 'email':
+      // Email must end with one of the allowed domains (.com, .in, .gov, .edu)
+      const emailRegex = /^[^\s@]+@[^\s@]+\.(com|in|gov|edu)$/;
+      errors.email = emailRegex.test(value) ? '' : 'Invalid email address. Allowed domains are .com, .in, .gov, .edu';
+      break;
 
-    // Check if form is valid after each change
-    setIsFormValid(Object.values(errors).every((error) => error === ''));
-  };
+    case 'password':
+      // Password must be at least 6 characters long
+      errors.password = value.length >= 6 ? '' : 'Password must be at least 6 characters long';
+      break;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent page reload on form submission
+    default:
+      break;
+  }
 
+  setFormErrors(errors);
+
+  // Check if form is valid after each change
+  setIsFormValid(Object.values(errors).every((error) => error === ''));
+};
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
     const response = await fetch('http://localhost:5000/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(formData)
+      body: JSON.stringify(formData)  // formData contains the 'role' (User or Artist)
     });
 
-    const data = await response.json();  
+    const data = await response.json();
 
-    // Handle successful registration
-    alert('Registration successful!');
-    console.log(data);
-    handleClose();
-    return data;
-  };
+    if (response.ok) {
+      alert('Registration successful!');
+      console.log(data)
+      handleClose();
+    } else {
+      console.log(data)
+      alert('Registration failed. Please try again.'+ data.message);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
 
   return (
     <div className="modal-backdrop">
@@ -88,8 +116,16 @@ function Register({ show, handleClose, openLoginModal }) {
             <div className="signup-left">
               <h2>SIGN UP</h2>
               <div className="role-toggle">
-                <button className={`toggle-btn ${!isArtist ? 'active' : ''}`} onClick={toggleRole}>User</button>
-                <button className={`toggle-btn ${isArtist ? 'active' : ''}`} onClick={toggleRole}>Artist</button>
+                <button 
+                  className={`toggle-btn ${!isArtist ? 'active' : ''}`} 
+                  onClick={toggleRole}>
+                  User
+                </button>
+                <button 
+                  className={`toggle-btn ${isArtist ? 'active' : ''}`} 
+                  onClick={toggleRole}>
+                  Artist
+                </button>
               </div>
               <form onSubmit={handleSubmit}>
                 <input

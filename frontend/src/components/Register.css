@@ -145,7 +145,7 @@
 }
 
 .toggle-btn.active {
-  background-color: black;
+  background-color: rgb(55, 198, 81);
   color: white;
 }
 .input-error {
@@ -157,3 +157,6 @@
   font-size: 0.9em;
   margin-top: 5px;
 }
+
+
+
