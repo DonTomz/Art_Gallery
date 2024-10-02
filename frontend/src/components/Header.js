@@ -16,20 +16,17 @@ const Header = ({ openModal, openRegisterModal }) => {
 
 
 
-
   // Logout function to clear localStorage and update the state
   const handleLogout = () => {
     localStorage.removeItem('username');
     setUsername(null);
     navigate('/')
-
-    // Optionally, you can also navigate to the homepage or login page after logout
   };
 
   return (
     <header className="header">
       <div className="header-left">
-        <h1 className="logo">
+        <h1 className="logo" >
           <span>ART</span> GALLERY
         </h1>
       </div>

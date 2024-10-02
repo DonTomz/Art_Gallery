@@ -5,6 +5,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const artRoutes = require('./routes/artRoutes');
 const artworkRoutes = require('./routes/artworks');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 
@@ -25,7 +26,8 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 // Route registration
 app.use('/api/auth', authRoutes);
 app.use('/api/art', artRoutes);
-app.use('/api/artworks', artworkRoutes); // Make sure artworkRoutes is properly imported and defined
+app.use('/api/artworks', artworkRoutes); 
+app.use('/api/admin', adminRoutes);
 
 // Test Route
 app.get('/', (req, res) => {

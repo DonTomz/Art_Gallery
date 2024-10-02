@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; 
 import { GoogleLogin } from '@react-oauth/google';
@@ -41,12 +40,13 @@ function Login({ show, handleClose, openRegisterModal }) {
         setTimeout(() => {
           window.location.reload(); 
         }, 500); 
+        
       } else {
         alert('Invalid email or password. Please try again.');
       }
     } catch (error) {
       console.error('Login failed:', error);
-      alert('Unable to send user credentials. Please try again.');
+      alert('Login failed');
     }
   };
 
@@ -82,52 +82,56 @@ function Login({ show, handleClose, openRegisterModal }) {
   };
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content">
-        <span className="close-button" onClick={handleClose}>&times;</span>
-        <div className="login-container">
-          <div className="login-box">
-            <div className="login-left">
-              <h2>LOGIN</h2>
-              <form onSubmit={handleSubmit}>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className='text-black'
-                />
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  className='text-black'
-                />
-                <button type="submit">Login</button>
-              </form>
-              <div className='google-login'>
-                <GoogleLogin
-                  onSuccess={handleGoogleLoginSuccess}  // Handle successful Google login
-                  onError={() => {
-                    console.log('Google Login Failed');
-                  }}
-                />
-              </div>
+    <div className="fixed inset-0 flex justify-center items-center bg-gray-50 bg-opacity-20 backdrop-blur-lg z-50">
+    <div className="bg-white bg-opacity-20 p-6 rounded-lg w-98 flex flex-col items-center relative backdrop-blur-md shadow-xl bg-[url('E:/Projects/Art_Gallery/frontend/src/images/Login_Image.jpg')] z-60">
+      <span className="absolute top-2 right-2 text-white text-2xl font-bold cursor-pointer hover:text-red-500" onClick={handleClose}>&times;</span>
+      <div className="flex justify-center items-center w-full bg-cover bg-center">
+        <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-lg shadow-md flex overflow-hidden">
+          <div className="bg-black bg-opacity-10 text-white p-12 w-72">
+            <h2 className="text-black text-2xl mb-6 font-bold">LOGIN</h2>
+            <form onSubmit={handleSubmit} className="flex flex-col">
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="p-2 mb-3 rounded text-black"
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="p-2 mb-3 rounded text-black"
+              />
+              <button type="submit" className="p-2 bg-black text-white rounded hover:bg-gray-800 transition-colors">Login</button>
+            </form>
+            <div className="mt-4">
+              <GoogleLogin
+                onSuccess={handleGoogleLoginSuccess} 
+                onError={() => {
+                  console.log('Google Login Failed');
+                }}
+              />
             </div>
-            <div className="login-right">
-              <h2>Not a Member?</h2>
-              <p>Sign Up NOW!</p>
-              <button onClick={() => { handleClose(); openRegisterModal(); }}>Sign Up</button>
-            </div>
+          </div>
+          <div className="bg-white bg-opacity-10 p-12 text-white w-72">
+            <h2 className="text-black text-2xl">Not a Member?</h2>
+            <p className="text-black">Sign Up NOW!</p>
+            <button
+              className="mt-6 p-2 w-32 bg-black text-white rounded hover:bg-gray-800 transition-colors"
+              onClick={() => { handleClose(); openRegisterModal(); }}> Sign Up
+            </button>
           </div>
         </div>
       </div>
     </div>
+  </div>
+  
   );
 }
 

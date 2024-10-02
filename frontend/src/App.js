@@ -7,9 +7,10 @@ import About from './components/About';
 import Contact from './components/Contact';
 import Login from './components/Login';
 import Register from './components/Register'; 
-import Users from './components/Usersi/Users';
+import Users from './components/Usersinfo/Users';
 import Painting from './pages/Painting';
 import AddArtwork from './components/AddArtwork';
+import AdminPage from './components/Admin';
 
 
 function App() {
@@ -35,6 +36,8 @@ function App() {
           <Route path="/user" element={<Users/>}/>
           <Route path="/paint" element={<Painting/>}/>
           <Route path="/add-artwork" element={<AddArtwork />} />
+          <Route path='/admin' element={<AdminPage />}/>
+          <Route path="/login" element={<Login/>}/>
         </Routes>
         </main>
         <Footer />

@@ -6,6 +6,7 @@ const Artist= require('../models/Artist');
 
 const router = express.Router();
 
+
 // Register new user or artist
 router.post('/register', async (req, res) => {
   const { username, email, password, role } = req.body; // role added here
@@ -22,14 +23,14 @@ router.post('/register', async (req, res) => {
     }
 
     // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new user or artist instance based on role
     if (role === 'User') {
       const newUser = new User({
         username,
         email,
-        password: hashedPassword, // hashed password
+        password: password, // hashed password
       });
       // Debug: Log the user details before saving
       console.log("User to be saved:", newUser);
@@ -41,7 +42,7 @@ router.post('/register', async (req, res) => {
       const newArtist = new Artist({
         username,
         email,
-        password: hashedPassword, // hashed password
+        password: password, // hashed password
       });
       // Debug: Log the artist details before saving
       console.log("Artist to be saved:", newArtist);
@@ -58,6 +59,10 @@ router.post('/register', async (req, res) => {
   }
 });
 
+
+
+
+
 // Login route
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -73,15 +78,16 @@ router.post('/login', async (req, res) => {
 
     if (!user) {
       console.log("User not found with email:", email); // Debug: Log if user is not found
-      return res.status(400).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'User not found' });
     }
 
     // Compare the input password (plain text) with the hashed password from the database
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(req.body.password, user.password);
+    console.log(isMatch)
 
     if (!isMatch) {
       console.log("Password mismatch for user:", user.email); // Debug: Log if passwords do not match
-      return res.status(400).json({ message: 'Invalid email or password' });
+      return res.status(400).json({ message: 'Incorrect password' });
     }
 
     // Debug: Log successful login
@@ -102,6 +108,9 @@ router.post('/login', async (req, res) => {
 });
 
 
+
+
+
 router.get('/user/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id); // Find user by ID
@@ -115,8 +124,11 @@ router.get('/user/:id', async (req, res) => {
   }
 });
 
-const CLIENT_ID='178034908813-r3g51hrfa86fclssiq8fkfvtauj737to.apps.googleusercontent.com'
 
+
+
+
+const CLIENT_ID='178034908813-r3g51hrfa86fclssiq8fkfvtauj737to.apps.googleusercontent.com'
 
 router.post('/api/auth/google-login', async (req, res) => {
   const { token } = req.body;
