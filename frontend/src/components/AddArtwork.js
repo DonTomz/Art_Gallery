@@ -6,9 +6,10 @@ function AddArtwork() {
     artist: '',
     description: '',
     price: '',
-    imageUrl: '',
     category: ''
   });
+
+  const [imageFile, setImageFile] = useState(null); // State to track image file
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,19 +19,35 @@ function AddArtwork() {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Create FormData object to include both file and artwork data
+    const formData = new FormData();
+    formData.append('title', artwork.title);
+    formData.append('artist', artwork.artist);
+    formData.append('description', artwork.description);
+    formData.append('price', artwork.price);
+    formData.append('category', artwork.category);
+    formData.append('image', imageFile); // Append the image file
+
     try {
       const response = await fetch('http://localhost:5000/api/artworks/add', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(artwork),
+        body: formData, // Send formData
       });
+
       if (response.ok) {
         alert('Artwork added successfully!');
-        setArtwork({ title: '', artist: '', description: '', price: '', imageUrl: '', category: '' });
+        setArtwork({ title: '', artist: '', description: '', price: '', category: '' });
+        setImageFile(null); // Clear the file input
       } else {
         alert('Failed to add artwork.');
       }
@@ -43,7 +60,7 @@ function AddArtwork() {
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">Add New Artwork</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">Title</label>
             <input
@@ -90,13 +107,12 @@ function AddArtwork() {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="imageUrl">Image URL</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="imageUrl">Upload Image</label>
             <input
+              type="file"
+              accept="image/*"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              name="imageUrl"
-              value={artwork.imageUrl}
-              onChange={handleChange}
-              placeholder="Enter image URL"
+              onChange={handleImageChange}
               required
             />
           </div>

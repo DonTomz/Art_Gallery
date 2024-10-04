@@ -6,6 +6,8 @@ const authRoutes = require('./routes/auth');
 const artRoutes = require('./routes/artRoutes');
 const artworkRoutes = require('./routes/artworks');
 const adminRoutes = require('./routes/admin');
+const path =require('path');
+const fs = require('fs');
 
 const app = express();
 
@@ -15,7 +17,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Moved before route registration
 
 // Serve static files (images)
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Ensure the uploads directory exists
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
 
 // MongoDB Connection
 const uri = process.env.MONGODB_URI;

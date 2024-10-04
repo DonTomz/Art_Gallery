@@ -34,7 +34,10 @@ function Home() {
       <div className="artworks-container">
         {artworks.map((artwork) => (
           <div key={artwork._id} className="artwork-card"> {/* Use artwork._id as key */}
-            <img src={artwork.imageUrl} alt={artwork.title} />
+                <img
+                  src={`http://localhost:5000/uploads/${artwork.imageUrl}`}
+                  alt={artwork.title}
+                />
             <h3>{artwork.title}</h3>
             <p><strong>Artist:</strong> {artwork.artist}</p>
             <p>{artwork.description}</p>
