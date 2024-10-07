@@ -8,10 +8,12 @@ import Contact from './components/Contact';
 import Login from './components/Login';
 import Register from './components/Register'; 
 import Users from './components/Usersinfo/Users';
-import Painting from './pages/Painting';
+import Painting from './components/pages/Painting';
 import AddArtwork from './components/AddArtwork';
 import AdminPage from './components/Admin';
 import Artist from './components/Usersinfo/Artists'
+import ForgotPassword from './components/pages/ForgotPassword';
+import ResetPassword from './components/pages/ResetPassword';
 
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -39,6 +41,8 @@ function App() {
           <Route path='/admin' element={<AdminPage />}/>
           <Route path="/login" element={<Login/>}/>
           <Route path="/artist" element={<Artist />}/>
+          <Route path="/forgot-password" element={<ForgotPassword/>}/>
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
         </Routes>
         </main>
         <Footer />

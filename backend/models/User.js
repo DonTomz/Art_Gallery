@@ -21,6 +21,8 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'artist', 'admin'], // Define the roles
     required: true,
   },
+  resetPasswordToken: { type: String },  // For password reset
+  resetPasswordExpires: { type: Date } ,
 }, { timestamps: true });
 
 // Hash the password before saving the user
