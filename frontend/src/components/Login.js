@@ -33,10 +33,17 @@ function Login({ show, handleClose, openRegisterModal }) {
         localStorage.setItem('authToken', response.data.token); 
         localStorage.setItem('username', response.data.username); 
         localStorage.setItem('userId', response.data.userId);  
+        localStorage.setItem('role', response.data.role)
 
   
         handleClose();  
-        navigate('/user/');  
+        if (response.data.role === 'user') {
+          navigate('/user');  // Navigate to user dashboard
+        } else if (response.data.role === 'artist') {
+          navigate('/artist');  // Navigate to artist dashboard
+        } else if (response.data.role === 'admin') {
+          navigate('/admin');  // Navigate to admin dashboard
+        }
         setTimeout(() => {
           window.location.reload(); 
         }, 500); 
@@ -65,7 +72,8 @@ function Login({ show, handleClose, openRegisterModal }) {
         // Store token and user info after successful login
         localStorage.setItem('authToken', response.data.token); 
         localStorage.setItem('username', response.data.username);  
-        localStorage.setItem('userId', response.data.userId);  
+        localStorage.setItem('userId', response.data.userId);
+        localStorage.setItem('role', response.data.role)  
   
         handleClose();  
         navigate('/user');  

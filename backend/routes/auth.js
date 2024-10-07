@@ -2,57 +2,40 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const Artist= require('../models/Artist');
 
 const router = express.Router();
 
 
-// Register new user or artist
+// Register new user, artist, or admin
 router.post('/register', async (req, res) => {
   const { username, email, password, role } = req.body; // role added here
 
   console.log('Incoming request data:', req.body); // Debug: Check incoming data
 
   try {
-    // Check if the user or artist already exists
+    // Check if the user already exists
     const userExists = await User.findOne({ email });
-    const artistExists = await Artist.findOne({ email });
 
-    if (userExists || artistExists) {
+    if (userExists) {
       return res.status(400).json({ message: 'User or Artist already exists' });
     }
 
-    // Hash the password
-    // const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user or artist instance based on role
-    if (role === 'User') {
-      const newUser = new User({
-        username,
-        email,
-        password: password, // hashed password
-      });
-      // Debug: Log the user details before saving
-      console.log("User to be saved:", newUser);
+    // Create a new user, artist, or admin instance based on role
+    const newUser = new User({
+      username,
+      email,
+      password,
+      role: role.toLowerCase(),  // Ensure role is in lowercase ('user', 'artist', or 'admin')
+    });
 
-      // Save the user to the database
-      await newUser.save();
-      return res.status(201).json({ message: 'User registered successfully' });
-    } else if (role === 'Artist') {
-      const newArtist = new Artist({
-        username,
-        email,
-        password: password, // hashed password
-      });
-      // Debug: Log the artist details before saving
-      console.log("Artist to be saved:", newArtist);
+    // Debug: Log the user details before saving
+    console.log("User to be saved:", newUser);
 
-      // Save the artist to the database
-      await newArtist.save();
-      return res.status(201).json({ message: 'Artist registered successfully' });
-    } else {
-      return res.status(400).json({ message: 'Invalid role' });
-    }
+    // Save the user to the database
+    await newUser.save();
+    return res.status(201).json({ message: `${role} registered successfully` });
+
   } catch (error) {
     console.error('Error during registration:', error); // Debug: Log the error
     return res.status(500).json({ message: 'Server error', error });
@@ -83,7 +66,6 @@ router.post('/login', async (req, res) => {
 
     // Compare the input password (plain text) with the hashed password from the database
     const isMatch = await bcrypt.compare(req.body.password, user.password);
-    console.log(isMatch)
 
     if (!isMatch) {
       console.log("Password mismatch for user:", user.email); // Debug: Log if passwords do not match
@@ -100,7 +82,8 @@ router.post('/login', async (req, res) => {
     // Return the JWT token
     const userId = user._id
     const username = user.username
-    return res.status(200).json({ token, userId, username});
+    const role = user.role
+    return res.status(200).json({ token, userId, username, role});
   } catch (error) {
     console.error('Error during login:', error); // Debug: Log any errors during login
     return res.status(500).json({ message: 'Server error' });

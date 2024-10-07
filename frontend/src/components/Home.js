@@ -33,7 +33,7 @@ function Home() {
       <h1>Featured Artworks</h1>
       <div className="artworks-container">
         {artworks.map((artwork) => (
-          <div key={artwork._id} className="artwork-card"> {/* Use artwork._id as key */}
+          <div key={artwork._id} className="artwork-card"> 
                 <img
                   src={`http://localhost:5000/uploads/${artwork.imageUrl}`}
                   alt={artwork.title}

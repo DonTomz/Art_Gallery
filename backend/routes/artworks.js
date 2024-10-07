@@ -55,4 +55,18 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Get artworks by category
+router.get('/category/:category', async (req, res) => {
+  try {
+    const category = req.params.category;
+    console.log(category)
+    const artworks = await Artwork.find({ category: category });
+    res.status(200).json(artworks);
+    console.log(artworks)
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching artworks', error });
+  }
+});
+
+
 module.exports = router;

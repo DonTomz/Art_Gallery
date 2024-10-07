@@ -11,7 +11,7 @@ import Users from './components/Usersinfo/Users';
 import Painting from './pages/Painting';
 import AddArtwork from './components/AddArtwork';
 import AdminPage from './components/Admin';
-
+import Artist from './components/Usersinfo/Artists'
 
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -38,6 +38,7 @@ function App() {
           <Route path="/add-artwork" element={<AddArtwork />} />
           <Route path='/admin' element={<AdminPage />}/>
           <Route path="/login" element={<Login/>}/>
+          <Route path="/artist" element={<Artist />}/>
         </Routes>
         </main>
         <Footer />

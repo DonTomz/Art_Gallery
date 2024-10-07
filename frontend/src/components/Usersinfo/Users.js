@@ -21,11 +21,10 @@ const Users = () => {
       fetchUser();  // Fetch user data if userId exists in localStorage
     }
   }, []);
-
+console.log(username)
   return (
     <div>
       <Home/>
-      <h3>{username}</h3>
     </div>
   );
 }
