@@ -14,6 +14,7 @@ import AdminPage from './components/Admin';
 import Artist from './components/Usersinfo/Artists'
 import ForgotPassword from './components/pages/ForgotPassword';
 import ResetPassword from './components/pages/ResetPassword';
+import ArtworkDetail from './components/pages/ArtworkDetail';
 
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -25,11 +26,14 @@ function App() {
   const openRegisterModal = () => setShowRegisterModal(true);
   const closeRegisterModal = () => setShowRegisterModal(false);
 
+  // const location = useLocation();
+  // const hideHeaderRoutes = ['/reset-password'];
+
   return (
     <div className="App">
+      
       <Router>
         <main className='min-h-[calc(100vh-10px)]  '>
-
         <Header openModal={openLoginModal} openRegisterModal={openRegisterModal} />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -43,6 +47,7 @@ function App() {
           <Route path="/artist" element={<Artist />}/>
           <Route path="/forgot-password" element={<ForgotPassword/>}/>
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/artworks/:id" element ={<ArtworkDetail />}/>
         </Routes>
         </main>
         <Footer />

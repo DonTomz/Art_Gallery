@@ -52,7 +52,7 @@ router.post('/register', async (req, res) => {
 // Login route
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  console.log(email, password)
+  console.log(email, password);
 
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required' });
@@ -65,6 +65,18 @@ router.post('/login', async (req, res) => {
     if (!user) {
       console.log("User not found with email:", email); // Debug: Log if user is not found
       return res.status(401).json({ message: 'User not found' });
+    }
+
+    // If the user is an artist, check if they are approved
+    if (user.role === 'artist' && !user.isApproved) {
+      console.log("Artist not approved:", user.email); // Debug: Log if artist is not approved
+      return res.status(403).json({ message: 'Your account is pending approval' });
+    }
+
+    //Restrict entry for blocked users
+    if(user.role === 'user' && user.isBlock){
+      console.log("User blocked:", user.email); // Debug: Log if user is blocked
+      return res.status(403).json({ message: 'Your account is blocked' });
     }
 
     // Compare the input password (plain text) with the hashed password from the database
@@ -82,16 +94,18 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
-    // Return the JWT token
-    const userId = user._id
-    const username = user.username
-    const role = user.role
-    return res.status(200).json({ token, userId, username, role});
+
+    // Return the JWT token, userId, username, and role
+    const userId = user._id;
+    const username = user.username;
+    const role = user.role;
+    return res.status(200).json({ token, userId, username, role });
   } catch (error) {
     console.error('Error during login:', error); // Debug: Log any errors during login
     return res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 
 
@@ -114,7 +128,7 @@ router.get('/user/:id', async (req, res) => {
 
 
 
-const CLIENT_ID='178034908813-r3g51hrfa86fclssiq8fkfvtauj737to.apps.googleusercontent.com'
+// const CLIENT_ID='178034908813-r3g51hrfa86fclssiq8fkfvtauj737to.apps.googleusercontent.com'
 
 router.post('/api/auth/google-login', async (req, res) => {
   const { token } = req.body;
@@ -123,7 +137,7 @@ router.post('/api/auth/google-login', async (req, res) => {
     // Verify the Google token
     const ticket = await client.verifyIdToken({
       idToken: token,
-      audience: CLIENT_ID,
+      audience: process.env.CLIENT_ID,
     });
     const payload = ticket.getPayload();
 

@@ -104,6 +104,7 @@ function AddArtwork() {
               onChange={handleChange}
               placeholder="Enter price"
               required
+              type="number" // Added type number for better input handling
             />
           </div>
           <div className="mb-4">
@@ -118,14 +119,21 @@ function AddArtwork() {
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="category">Category</label>
-            <input
+            <select
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               name="category"
               value={artwork.category}
               onChange={handleChange}
-              placeholder="Enter category"
               required
-            />
+            >
+              <option value="">Select a category</option>
+              <option value="Painting">Painting</option>
+              <option value="Photography">Photography</option>
+              <option value="Sculpture">Sculpture</option>
+              <option value="Drawing">Drawing</option>
+              <option value="Print">Print</option>
+              <option value="Inspiration">Inspiration</option>
+            </select>
           </div>
           <button
             type="submit"

@@ -59,14 +59,21 @@ router.get('/', async (req, res) => {
 router.get('/category/:category', async (req, res) => {
   try {
     const category = req.params.category;
-    console.log(category)
     const artworks = await Artwork.find({ category: category });
     res.status(200).json(artworks);
-    console.log(artworks)
   } catch (error) {
     res.status(500).json({ message: 'Error fetching artworks', error });
   }
 });
 
+router.get('/artwork/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const artwork = await Artwork.findById(id);
+    res.json(artwork);
+  } catch (error) {
+    res.status(500).json({ message: 'Artwork not found' });
+  }
+});
 
 module.exports = router;

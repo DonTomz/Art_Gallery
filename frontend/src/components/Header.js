@@ -30,7 +30,7 @@ const Header = ({ openModal, openRegisterModal }) => {
     navigate('/')
     setTimeout(() => {
       window.location.reload(); 
-    }, 500);
+    }, 200);
 
   };
 
@@ -43,7 +43,7 @@ const Header = ({ openModal, openRegisterModal }) => {
       </div>
       <nav className="nav-center">
         <ul>
-          {role !== 'admin' && (
+          {role !== 'admin'  && (
             <>
               <li><Link to="/">Home</Link></li>
               <li><Link to="/paint">Paintings</Link></li>
@@ -56,7 +56,7 @@ const Header = ({ openModal, openRegisterModal }) => {
           )}
           
           {/* Only show Add Artwork if user is an artist and not on the home page */}
-          {role === 'artist' && location.pathname !== '/' && (
+          {role === 'artist' && location.pathname !== '' && (
             <li><Link to="/add-artwork">Add Artwork</Link></li>
           )}
         </ul>

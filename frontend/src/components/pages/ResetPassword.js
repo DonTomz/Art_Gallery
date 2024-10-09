@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// import './Resetp.css'
 
 const ResetPassword = () => {
-    const { token } = useParams(); // Get the token from URL
-    const navigate = useNavigate(); // Hook to navigate user
-    const [password, setPassword] = useState(''); // State for new password
-    const [confirmPassword, setConfirmPassword] = useState(''); // State for confirming password
-    const [message, setMessage] = useState(''); // State for messages
-    const [error, setError] = useState(''); // State for errors
-
+    const { token } = useParams();
+    const navigate = useNavigate();
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
@@ -19,8 +17,8 @@ const ResetPassword = () => {
             setError("Passwords do not match");
             return;
         }
-    
-        setLoading(true); // Set loading state
+
+        setLoading(true); 
         try {
             const { data } = await axios.post(`http://localhost:5000/api/auth/resetpassword/${token}`, { password });
             setMessage(data.message);
@@ -32,37 +30,45 @@ const ResetPassword = () => {
             console.error("Error resetting password:", error.response ? error.response.data : error.message);
             setError(error.response?.data?.message || "Error resetting password");
         } finally {
-            setLoading(false); // Reset loading state
+            setLoading(false); 
         }
     };
-    
+
     return (
-        <div className="reset-password-container">
-            <h2>Reset Password</h2>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="password"
-                    placeholder="New Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Confirm New Password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                />
-                <button type="submit" disabled={loading}>
-                    {loading ? "Resetting..." : "Submit"}
-                </button>
-            </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {message && <p style={{ color: 'green' }}>{message}</p>}
+        <div className="flex justify-center items-center h-screen bg-gray-100">
+            <div className="bg-white shadow-lg p-8 rounded-md w-full max-w-md">
+                <h1 className="text-center text-3xl font-bold text-gray-800 mb-6">ART GALLERY</h1>
+                <h2 className="text-xl text-gray-700 mb-4 text-center">Reset Password</h2>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <input
+                        type="password"
+                        placeholder="New Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <input
+                        type="password"
+                        placeholder="Confirm New Password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                        {loading ? "Resetting..." : "Submit"}
+                    </button>
+                </form>
+                {error && <p className="text-red-600 text-center mt-4">{error}</p>}
+                {message && <p className="text-green-600 text-center mt-4">{message}</p>}
+            </div>
         </div>
     );
-    
 };
 
 export default ResetPassword;

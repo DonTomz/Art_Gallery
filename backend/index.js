@@ -37,6 +37,7 @@ app.use('/api/art', artRoutes);
 app.use('/api/artworks', artworkRoutes); 
 app.use('/api/admin', adminRoutes);
 
+
 // Test Route
 app.get('/', (req, res) => {
     res.send("Welcome to the Art Gallery API!");
