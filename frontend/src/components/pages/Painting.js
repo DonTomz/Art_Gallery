@@ -36,7 +36,7 @@ const PaintingPage = () => {
                 className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden text-center"
               >
                 <img
-                  src={painting.imageUrl}
+                  src={`http://localhost:5000/uploads/${painting.imageUrl}`}
                   alt={painting.title}
                   className="w-full h-48 object-cover"
                 />

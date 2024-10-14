@@ -1,95 +1,164 @@
 import React, { useState, useEffect } from 'react';
-import { Link ,useNavigate, useLocation } from 'react-router-dom';
-import './Header.css';
+import { Link, useNavigate} from 'react-router-dom';
+
+// Custom hook to determine if the screen width is less than a specific value
+const useMediaQuery = (query) => {
+  const [matches, setMatches] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    setMatches(media.matches);
+
+    const handleChange = () => setMatches(media.matches);
+    media.addEventListener('change', handleChange);
+
+    return () => media.removeEventListener('change', handleChange);
+  }, [query]);
+  return matches;
+};
 
 const Header = ({ openModal, openRegisterModal }) => {
   const [username, setUsername] = useState(null);
-  const navigate =useNavigate()
-  const [role, setRole]= useState(null)
-  const location = useLocation();
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const navigate = useNavigate();
+  const [role, setRole] = useState(null);
+  // const location = useLocation();
+  
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
-  // Fetch the logged-in username from localStorage when the component mounts
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
-    const storedRole = localStorage.getItem('role')
+    const storedRole = localStorage.getItem('role');
     if (storedUsername) {
       setUsername(storedUsername);
     }
-    if(storedRole){
+    if (storedRole) {
       setRole(storedRole);
     }
   }, []);
 
+  // Toggle dropdown visibility
+  const toggleDropdown = () => {
+    setDropdownVisible(!dropdownVisible);
+  };
 
-
-  // Logout function to clear localStorage and update the state
   const handleLogout = () => {
     localStorage.removeItem('username');
-    localStorage.removeItem('role')
+    localStorage.removeItem('role');
+    localStorage.removeItem('userId');
     setUsername(null);
-    navigate('/')
+    setRole(null);
+    navigate('/');
     setTimeout(() => {
-      window.location.reload(); 
+      window.location.reload();
     }, 200);
+  };
 
+  const renderNavLinks = () => {
+    if (isMobile) {
+      return (
+        <>
+          <Link to="/" className="text-black font-medium text-base no-underline hover:text-gray-600">Home</Link>
+          <Link to="/paint" className="text-black font-medium text-base no-underline hover:text-gray-600">Paintings</Link>
+          <Link to="/photography" className="text-black font-medium text-base no-underline hover:text-gray-600">Photography</Link>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <Link to="/" className="text-black font-medium text-base no-underline hover:text-gray-600">Home</Link>
+        <Link to="/paint" className="text-black font-medium text-base no-underline hover:text-gray-600">Paintings</Link>
+        <Link to="/photography" className="text-black font-medium text-base no-underline hover:text-gray-600">Photography</Link>
+        <Link to="/sculpture" className="text-black font-medium text-base no-underline hover:text-gray-600">Sculpture</Link>
+        <Link to="/drawings" className="text-black font-medium text-base no-underline hover:text-gray-600">Drawings</Link>
+        <Link to="/prints" className="text-black font-medium text-base no-underline hover:text-gray-600">Prints</Link>
+        <Link to="/inspiration" className="text-black font-medium text-base no-underline hover:text-gray-600">Inspiration</Link>
+      </>
+    );
   };
 
   return (
-    <header className="header">
-      <div className="header-left">
-        <h1 className="logo" >
-          <span>ART</span> GALLERY
-        </h1>
+    <header className="flex flex-col md:flex-row justify-between items-center py-3 px-5 bg-white border-b border-gray-300">
+      <div className="text-2xl font-bold text-black mb-3 md:mb-0">
+        <span>ART </span> <span className='block md:inline'>GALLERY</span>
       </div>
-      <nav className="nav-center">
-        <ul>
-          {role !== 'admin'  && (
-            <>
-              <li><Link to="/">Home</Link></li>
-              <li><Link to="/paint">Paintings</Link></li>
-              <li><Link to="/photography">Photography</Link></li>
-              <li><Link to="/sculpture">Sculpture</Link></li>
-              <li><Link to="/drawings">Drawings</Link></li>
-              <li><Link to="/prints">Prints</Link></li>
-              <li><Link to="/inspiration">Inspiration</Link></li>
-            </>
-          )}
-          
-          {/* Only show Add Artwork if user is an artist and not on the home page */}
-          {role === 'artist' && location.pathname !== '' && (
-            <li><Link to="/add-artwork">Add Artwork</Link></li>
-          )}
-        </ul>
+      <nav className="flex flex-wrap md:flex-nowrap space-x-4 md:space-x-6 mb-3 md:mb-0">
+        {role !== 'admin' && renderNavLinks()}
       </nav>
-      <div className="header-right">
-        <div className="auth-links">
-          {username ? (
-            <div>
-              <span className="user-greet" >{username}  </span>
-              <span className="logout-link" onClick={handleLogout}>Logout</span>
-            </div>
-          ) : (
-            <div>
-              <span className="login-link" onClick={openModal}>Log In</span>
-              <span> | </span>
-              <span className="register-link-text" onClick={openRegisterModal}>Register</span>
-            </div>
-          )}
-        </div>
+      <div className="flex items-center space-x-5">
+        {username ? (
+          <div className="relative">
+            <button
+              onClick={toggleDropdown}
+              className="text-black font-medium text-base hover:text-gray-600"
+            >
+              {username} <i className="fas fa-caret-down"></i>
+            </button>
+            {dropdownVisible && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                <Link
+                  to="/profile"
+                  className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
+                  onClick={() => setDropdownVisible(false)}
+                >
+                  Profile
+                </Link>
+                {role === 'artist' && (
+                  <Link
+                    to="/add-artwork"
+                    className="block px-4 py-2 text-black hover:bg-gray-100"
+                    onClick={() => setDropdownVisible(false)}
+                  >
+                    Add Artwork
+                  </Link>
+                )}
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setDropdownVisible(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 text-black hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+
+          </div>
+        ) : (
+          <div className="flex wrap space-x-2">
+            <span
+              className="cursor-pointer text-black font-medium text-base hover:text-gray-600"
+              onClick={openModal}
+            >
+              Log In
+            </span>
+            <span>|</span>
+            <span
+              className="cursor-pointer text-black font-medium text-base hover:text-gray-600"
+              onClick={openRegisterModal}
+            >
+              Register
+            </span>
+          </div>
+        )}
         {role !== 'admin' && (
-          <div className="icons">
-            <Link to="/wishlist" className="icon">
+          <div className="flex items-center space-x-3">
+            <Link to="/wishlist" className="text-black text-xl hover:text-gray-600">
               <i className="fas fa-heart"></i>
             </Link>
-            <Link to="/cart" className="icon">
+            <Link to="/cart" className="relative text-black text-xl hover:text-gray-600">
               <i className="fas fa-shopping-cart"></i>
-              <span className="cart-count">0</span>
+              <span className="absolute bottom-4 left font-medium bg-red-500 text-black text-xs px-2 py-1 rounded-full">
+                0
+              </span>
             </Link>
           </div>
         )}
       </div>
     </header>
   );
-}
+};
 
 export default Header;

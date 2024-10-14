@@ -2,6 +2,7 @@ const express = require('express');
 const Artwork = require('../models/Artwork');
 const multer = require('multer');
 const path = require('path');
+const Cartdata = require('../models/Cartdata');
 
 const router = express.Router();
 
@@ -20,7 +21,8 @@ const upload = multer({ storage: storage });
 // Route to insert artwork with image upload
 router.post('/add', upload.single('image'), async (req, res) => {
   try {
-    const { title, artist, description, price, category } = req.body;
+    const { title, artist, description, price, category, artistId } = req.body;
+
     
     // Get the image path if an image is uploaded
     const imageUrl = req.file ? `${req.file.filename}` : '';
@@ -33,6 +35,7 @@ router.post('/add', upload.single('image'), async (req, res) => {
       price,
       category,
       imageUrl, // Save image URL in the database
+      artistId
     });
 
     // Save the artwork to the database
@@ -75,5 +78,86 @@ router.get('/artwork/:id', async (req, res) => {
     res.status(500).json({ message: 'Artwork not found' });
   }
 });
+
+router.post('/cart/add', async (req, res) => {
+  const { userId, artworkId, quantity } = req.body;
+  console.log(req.body)
+
+  try {
+    let cart = await Cartdata.findOne({ userId });
+    
+    if (!cart) {
+      cart = new Cartdata({ userId, items: [{ artworkId, quantity }] });
+    } else {
+      const itemIndex = cart.items.findIndex(item => item.artworkId.toString() === artworkId);
+      if (itemIndex !== -1) {
+        cart.items[itemIndex].quantity += quantity;
+      } else {
+        cart.items.push({ artworkId, quantity });
+      }
+    }
+
+    await cart.save();
+    res.status(200).json(cart);
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding to cart' });
+  }
+});
+
+
+
+router.get('/cart/:userId', async (req, res) => {
+  const { userId } = req.params;
+  
+  try {
+    const cart = await Cartdata.findOne({ userId }).populate('items.artworkId');
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+    res.status(200).json(cart);
+  } catch (error) {
+    console.error('Error fetching cart:', error);
+    res.status(500).json({ message: 'Error fetching cart' });
+  }
+});
+
+
+router.post('/cart/update-quantity', async (req, res) => {
+  const { userId, artworkId, quantity } = req.body;
+
+  try {
+    let cart = await Cartdata.findOne({ userId });
+    if (!cart) return res.status(404).json({ message: 'Cart not found' });
+
+    const itemIndex = cart.items.findIndex(item => item.artworkId.toString() === artworkId);
+    if (itemIndex !== -1) {
+      cart.items[itemIndex].quantity = quantity;
+      await cart.save();
+      res.status(200).json(cart);
+    } else {
+      res.status(404).json({ message: 'Item not found in cart' });
+    }
+  } catch (error) {
+    console.error('Error updating quantity:', error);
+    res.status(500).json({ message: 'Error updating quantity' });
+  }
+});
+
+router.delete('/cart/remove', async (req, res) => {
+  const { userId, artworkId } = req.body;
+
+  try {
+    let cart = await Cartdata.findOne({ userId });
+    if (!cart) return res.status(404).json({ message: 'Cart not found' });
+
+    cart.items = cart.items.filter(item => item.artworkId.toString() !== artworkId);
+    await cart.save();
+    res.status(200).json(cart);
+  } catch (error) {
+    console.error('Error removing item:', error);
+    res.status(500).json({ message: 'Error removing item' });
+  }
+});
+
 
 module.exports = router;

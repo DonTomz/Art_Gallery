@@ -15,6 +15,7 @@ import Artist from './components/Usersinfo/Artists'
 import ForgotPassword from './components/pages/ForgotPassword';
 import ResetPassword from './components/pages/ResetPassword';
 import ArtworkDetail from './components/pages/ArtworkDetail';
+import CartPage from './components/pages/Cart';
 
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -47,7 +48,8 @@ function App() {
           <Route path="/artist" element={<Artist />}/>
           <Route path="/forgot-password" element={<ForgotPassword/>}/>
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/artworks/:id" element ={<ArtworkDetail />}/>
+          <Route path="/artworks/:id" element ={<ArtworkDetail openModal={openLoginModal}/>}/>
+          <Route path='/cart' element={<CartPage />}/>
         </Routes>
         </main>
         <Footer />

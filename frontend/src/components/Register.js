@@ -95,8 +95,8 @@ const handleSubmit = async (e) => {
 
     if (response.ok) {
       alert('Registration successful!');
-      console.log(data)
       handleClose();
+      openLoginModal();
     } else {
       console.log(data)
       alert('Registration failed. Please try again.'+ data.message);

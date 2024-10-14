@@ -29,6 +29,7 @@ function AddArtwork() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const artistId= localStorage.getItem('userId')
     // Create FormData object to include both file and artwork data
     const formData = new FormData();
     formData.append('title', artwork.title);
@@ -37,6 +38,7 @@ function AddArtwork() {
     formData.append('price', artwork.price);
     formData.append('category', artwork.category);
     formData.append('image', imageFile); // Append the image file
+    formData.append('artistId',artistId)
 
     try {
       const response = await fetch('http://localhost:5000/api/artworks/add', {
@@ -96,7 +98,7 @@ function AddArtwork() {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">Price ($)</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">Price (₹)</label>
             <input
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               name="price"
