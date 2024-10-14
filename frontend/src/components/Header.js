@@ -150,9 +150,9 @@ const Header = ({ openModal, openRegisterModal }) => {
             </Link>
             <Link to="/cart" className="relative text-black text-xl hover:text-gray-600">
               <i className="fas fa-shopping-cart"></i>
-              <span className="absolute bottom-4 left font-medium bg-red-500 text-black text-xs px-2 py-1 rounded-full">
+              {/* <span className="absolute bottom-4 left font-medium bg-red-500 text-black text-xs px-2 py-1 rounded-full">
                 0
-              </span>
+              </span> */}
             </Link>
           </div>
         )}

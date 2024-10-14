@@ -35,7 +35,16 @@ const userSchema = new mongoose.Schema({
   isBlock: {
     type: Boolean,
     default: false
-  }
+  },
+  profilePic: { 
+    type: String 
+  }, 
+  artistDescription: { 
+    type: String 
+  }, 
+  artistDocument: { 
+    type: String 
+  }, 
 }, { timestamps: true });
 
 // Hash the password before saving the user

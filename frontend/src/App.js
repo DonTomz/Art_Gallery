@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './components/Home';
@@ -11,11 +11,12 @@ import Users from './components/Usersinfo/Users';
 import Painting from './components/pages/Painting';
 import AddArtwork from './components/AddArtwork';
 import AdminPage from './components/Admin';
-import Artist from './components/Usersinfo/Artists'
+import Artist from './components/Usersinfo/Artists';
 import ForgotPassword from './components/pages/ForgotPassword';
 import ResetPassword from './components/pages/ResetPassword';
 import ArtworkDetail from './components/pages/ArtworkDetail';
 import CartPage from './components/pages/Cart';
+import ProfilePage from './components/pages/Profile';
 
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -27,39 +28,51 @@ function App() {
   const openRegisterModal = () => setShowRegisterModal(true);
   const closeRegisterModal = () => setShowRegisterModal(false);
 
-  // const location = useLocation();
-  // const hideHeaderRoutes = ['/reset-password'];
-
   return (
     <div className="App">
-      
       <Router>
-        <main className='min-h-[calc(100vh-10px)]  '>
-        <Header openModal={openLoginModal} openRegisterModal={openRegisterModal} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/user" element={<Users/>}/>
-          <Route path="/paint" element={<Painting/>}/>
-          <Route path="/add-artwork" element={<AddArtwork />} />
-          <Route path='/admin' element={<AdminPage />}/>
-          <Route path="/login" element={<Login/>}/>
-          <Route path="/artist" element={<Artist />}/>
-          <Route path="/forgot-password" element={<ForgotPassword/>}/>
-          <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/artworks/:id" element ={<ArtworkDetail openModal={openLoginModal}/>}/>
-          <Route path='/cart' element={<CartPage />}/>
-        </Routes>
+        <main className='min-h-[calc(100vh-10px)]'>
+          <HeaderWithConditionalRender 
+            openLoginModal={openLoginModal} 
+            openRegisterModal={openRegisterModal} 
+          />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/user" element={<Users />} />
+            <Route path="/paint" element={<Painting />} />
+            <Route path="/add-artwork" element={<AddArtwork />} />
+            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/artist" element={<Artist />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/artworks/:id" element={<ArtworkDetail openModal={openLoginModal} />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Routes>
         </main>
         <Footer />
         <Login show={showLoginModal} handleClose={closeLoginModal} openRegisterModal={openRegisterModal} />
-        <Register show={showRegisterModal} handleClose={closeRegisterModal} openLoginModal={openLoginModal} /> 
+        <Register show={showRegisterModal} handleClose={closeRegisterModal} openLoginModal={openLoginModal} />
       </Router>
     </div>
   );
 }
 
+// Component to conditionally render the Header
+function HeaderWithConditionalRender({ openLoginModal, openRegisterModal }) {
+  const location = useLocation();
+
+  // Define the routes where you want to hide the header
+  const hideHeaderRoutes = ['/forgot-password', `/reset-password/:token`];
+
+  return (
+    !hideHeaderRoutes.includes(location.pathname) && (
+      <Header openModal={openLoginModal} openRegisterModal={openRegisterModal} />
+    )
+  );
+}
+
 export default App;
-
-

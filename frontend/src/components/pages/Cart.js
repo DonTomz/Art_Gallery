@@ -54,6 +54,9 @@ function CartPage() {
         const updatedCart = await response.json();
         setCartItems(updatedCart.items);
         calculateTotal(updatedCart.items);
+        setTimeout(() => {
+          window.location.reload(); 
+        }, 200); 
       } else {
         alert('Error updating quantity');
       }
