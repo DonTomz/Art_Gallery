@@ -45,6 +45,12 @@ const userSchema = new mongoose.Schema({
   artistDocument: { 
     type: String 
   }, 
+  wishlist: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Artwork', // Referencing the Artwork model
+    },
+  ],
 }, { timestamps: true });
 
 // Hash the password before saving the user

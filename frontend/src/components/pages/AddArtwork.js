@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function AddArtwork() {
   const [artwork, setArtwork] = useState({
@@ -6,10 +7,20 @@ function AddArtwork() {
     artist: '',
     description: '',
     price: '',
-    category: ''
+    category: '',
+    stock: '', // Added stock state
   });
 
   const [imageFile, setImageFile] = useState(null); // State to track image file
+  const navigate = useNavigate();
+  const userId = localStorage.getItem('userId');
+
+  // Check if user is logged in
+  useEffect(() => {
+    if (!userId) {
+      navigate('/'); // Redirect to login if not logged in
+    }
+  }, [userId, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,7 +40,6 @@ function AddArtwork() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const artistId= localStorage.getItem('userId')
     // Create FormData object to include both file and artwork data
     const formData = new FormData();
     formData.append('title', artwork.title);
@@ -38,7 +48,8 @@ function AddArtwork() {
     formData.append('price', artwork.price);
     formData.append('category', artwork.category);
     formData.append('image', imageFile); // Append the image file
-    formData.append('artistId',artistId)
+    formData.append('stock', artwork.stock); // Append stock
+    formData.append('artistId', userId); // Append the artistId from session
 
     try {
       const response = await fetch('http://localhost:5000/api/artworks/add', {
@@ -48,7 +59,7 @@ function AddArtwork() {
 
       if (response.ok) {
         alert('Artwork added successfully!');
-        setArtwork({ title: '', artist: '', description: '', price: '', category: '' });
+        setArtwork({ title: '', artist: '', description: '', price: '', category: '', stock: '' });
         setImageFile(null); // Clear the file input
       } else {
         alert('Failed to add artwork.');
@@ -63,6 +74,7 @@ function AddArtwork() {
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">Add New Artwork</h2>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
+          {/* Title Input */}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">Title</label>
             <input
@@ -74,6 +86,7 @@ function AddArtwork() {
               required
             />
           </div>
+          {/* Artist Input */}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="artist">Artist</label>
             <input
@@ -85,6 +98,7 @@ function AddArtwork() {
               required
             />
           </div>
+          {/* Description Input */}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">Description</label>
             <textarea
@@ -97,6 +111,7 @@ function AddArtwork() {
               required
             />
           </div>
+          {/* Price Input */}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">Price (₹)</label>
             <input
@@ -109,6 +124,20 @@ function AddArtwork() {
               type="number" // Added type number for better input handling
             />
           </div>
+          {/* Stock Input */}
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="stock">Stock Available</label>
+            <input
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              name="stock"
+              value={artwork.stock}
+              onChange={handleChange}
+              placeholder="Enter number of items in stock"
+              required
+              type="number" // Added type number for better input handling
+            />
+          </div>
+          {/* Image Upload */}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="imageUrl">Upload Image</label>
             <input
@@ -119,6 +148,7 @@ function AddArtwork() {
               required
             />
           </div>
+          {/* Category Select */}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="category">Category</label>
             <select
@@ -129,14 +159,15 @@ function AddArtwork() {
               required
             >
               <option value="">Select a category</option>
-              <option value="Painting">Painting</option>
+              <option value="Paintings">Painting</option>
               <option value="Photography">Photography</option>
               <option value="Sculpture">Sculpture</option>
-              <option value="Drawing">Drawing</option>
-              <option value="Print">Print</option>
+              <option value="Drawings">Drawing</option>
+              <option value="Prints">Print</option>
               <option value="Inspiration">Inspiration</option>
             </select>
           </div>
+          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"

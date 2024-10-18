@@ -25,6 +25,11 @@ const artworkSchema = new mongoose.Schema({
     type: String, 
     required: true 
   },
+  stock: {
+    type: Number, // New stock field
+    required: true,
+    min: 0 // Ensures that stock cannot be negative
+  },
   artistId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

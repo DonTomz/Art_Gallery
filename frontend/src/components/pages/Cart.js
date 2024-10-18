@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function CartPage() {
@@ -7,31 +7,32 @@ function CartPage() {
   const userId = localStorage.getItem('userId');
   const navigate = useNavigate();
 
+      // Fetch cart details from backend, wrapped in useCallback to prevent re-creation on every render
+      const fetchCart = useCallback(async () => {
+        try {
+          const response = await fetch(`http://localhost:5000/api/artworks/cart/${userId}`);
+          if (response.ok) {
+            const cartData = await response.json();
+            setCartItems(cartData.items);
+            calculateTotal(cartData.items);
+          } else {
+            alert('Error fetching cart details');
+          }
+        } catch (error) {
+          console.error('Error fetching cart:', error);
+        }
+      }, [userId]);
+
   useEffect(() => {
     if (!userId) {
       alert("You must be logged in to view your cart.");
       navigate('/'); // Redirect if not logged in
       return;
     }
-
-    // Fetch cart details from backend
-    const fetchCart = async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/api/artworks/cart/${userId}`);
-        if (response.ok) {
-          const cartData = await response.json();
-          setCartItems(cartData.items);
-          calculateTotal(cartData.items);
-        } else {
-          alert('Error fetching cart details');
-        }
-      } catch (error) {
-        console.error('Error fetching cart:', error);
-      }
-    };
-
     fetchCart();
-  }, [userId, navigate]);
+  }, [userId, navigate, fetchCart]);
+
+
 
   // Function to calculate total amount
   const calculateTotal = (items) => {
@@ -39,32 +40,38 @@ function CartPage() {
     setTotalAmount(total);
   };
 
-  // Handle quantity change
+  // Handle quantity change with stock limit check
   const handleQuantityChange = async (artworkId, newQuantity) => {
     if (newQuantity < 1) return; // Prevent zero or negative quantities
-
+  
     try {
       const response = await fetch('http://localhost:5000/api/artworks/cart/update-quantity', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, artworkId, quantity: newQuantity })
       });
-
+  
       if (response.ok) {
         const updatedCart = await response.json();
+        fetchCart();
+        // Update the cart items and total amount without refreshing
         setCartItems(updatedCart.items);
         calculateTotal(updatedCart.items);
-        setTimeout(() => {
-          window.location.reload(); 
-        }, 200); 
+        
+        console.log('Quantity updated successfully');
       } else {
-        alert('Error updating quantity');
+        const errorData = await response.json();
+        console.error('Error updating quantity:', errorData.message);
+        alert(`Error: ${errorData.message}`);
       }
     } catch (error) {
       console.error('Error updating quantity:', error);
+      alert('Error updating quantity');
     }
   };
+  
 
+  
   // Handle remove item from cart
   const handleRemoveItem = async (artworkId) => {
     try {
@@ -112,16 +119,25 @@ function CartPage() {
                   <h2 className="text-xl font-semibold">{item.artworkId.title}</h2>
                   <p className="text-sm">Artist: {item.artworkId.artist}</p>
                   <p className="text-sm">Price: ₹{item.artworkId.price}</p>
+                  
+                  {item.artworkId.stock === null || item.artworkId.stock === 0 ? (
+                    <p className="text-red-500 font-semibold">Sold Out</p>
+                  ) : (
+                    <p className="text-sm">Available Stock: {item.artworkId.stock}</p>
+                  )}
                 </div>
               </div>
-
+  
               <div className="flex items-center gap-4">
                 <input
                   type="number"
                   min="1"
+                  max={item.artworkId.stock}
                   value={item.quantity}
-                  onChange={(e) => handleQuantityChange(item.artworkId._id, parseInt(e.target.value))}
+                  onChange={(e) => handleQuantityChange(item.artworkId._id, parseInt(e.target.value), item.artworkId.stock)}
                   className="w-16 border rounded-lg p-2 text-center"
+                  disabled={item.artworkId.stock === null || item.artworkId.stock === 0} // Disable if out of stock
+                  onKeyDown={(e) => e.preventDefault()} // Disable manual input
                 />
                 <button
                   onClick={() => handleRemoveItem(item.artworkId._id)}
@@ -132,13 +148,13 @@ function CartPage() {
               </div>
             </div>
           ))}
-
-
+  
           <div className="mt-5 text-right">
             <p className="text-xl font-semibold">Total Amount: ₹{totalAmount}</p>
             <button
               onClick={handleCheckout}
               className="mt-4 bg-yellow-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-yellow-600 transition"
+              disabled={cartItems.every(item => item.artworkId.stock === 0 || item.artworkId.stock === null)} // Disable checkout if all items are out of stock
             >
               Checkout
             </button>
@@ -147,6 +163,7 @@ function CartPage() {
       )}
     </div>
   );
+  
 }
 
 export default CartPage;

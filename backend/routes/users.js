@@ -10,7 +10,7 @@ const upload = multer({ dest: 'uploads/' });
 router.put('/:userId', upload.fields([{ name: 'profilePic' }, { name: 'artistDocument' }]), async (req, res) => {
   const { userId } = req.params;
   const { username, email, phoneNumber, artistDescription } = req.body;
-
+  console.log(req.body)
   try {
     const updatedData = { username, email, phoneNumber };
 
@@ -18,7 +18,6 @@ router.put('/:userId', upload.fields([{ name: 'profilePic' }, { name: 'artistDoc
     if (req.files && req.files.profilePic) {
       updatedData.profilePic = req.files.profilePic[0].filename;
     }
-
     // If artist, update description and document
     if (req.body.artistDescription) {
       updatedData.artistDescription = artistDescription;
@@ -34,5 +33,25 @@ router.put('/:userId', upload.fields([{ name: 'profilePic' }, { name: 'artistDoc
     res.status(500).json({ message: 'Error updating profile' });
   }
 });
+
+// Route to fetch user data by userId
+router.get('/get/:userId', async (req, res) => {
+    const { userId } = req.params;
+    console.log(req.params)
+  
+    try {
+      const user = await User.findById(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.status(200).json(user);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      res.status(500).json({ message: 'Error fetching user data' });
+    }
+  });
+  
 
 module.exports = router;

@@ -6,6 +6,8 @@ const authRoutes = require('./routes/auth');
 const artRoutes = require('./routes/artRoutes');
 const artworkRoutes = require('./routes/artworks');
 const adminRoutes = require('./routes/admin');
+const usersRoutes =require('./routes/users')
+
 const path =require('path');
 const fs = require('fs');
 
@@ -36,6 +38,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/art', artRoutes);
 app.use('/api/artworks', artworkRoutes); 
 app.use('/api/admin', adminRoutes);
+app.use('/api/users', usersRoutes)
 
 
 // Test Route

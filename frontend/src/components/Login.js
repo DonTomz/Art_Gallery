@@ -37,25 +37,33 @@ function Login({ show, handleClose, openRegisterModal }) {
         localStorage.setItem('userId', response.data.userId);  
         localStorage.setItem('role', response.data.role)
 
+      //  const lastPath= localStorage.getItem('lastPath')
+
   
         handleClose();  
+
         if (response.data.role === 'user') {
+          alert(response.data.message)
           navigate('/user');  
         } else if (response.data.role === 'artist') {
           navigate('/artist');  
         } else if (response.data.role === 'admin') {
-          navigate('/admin');  
+          window.location.href='/admin';
+            
         }
+
         setTimeout(() => {
           window.location.reload(); 
         }, 200); 
         
-      } else {
+      } 
+      
+      else {
         alert(response.data.message);
       }
     } catch (error) {
       console.error('Login failed:', error);
-      alert('Login failed');
+      alert(error.response.data.message);
     }
   };
 

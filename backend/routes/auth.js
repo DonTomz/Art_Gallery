@@ -99,7 +99,7 @@ router.post('/login', async (req, res) => {
     const userId = user._id;
     const username = user.username;
     const role = user.role;
-    return res.status(200).json({ token, userId, username, role });
+    return res.status(200).json({ token, userId, username, role ,message:'Login successful for user:'});
   } catch (error) {
     console.error('Error during login:', error); // Debug: Log any errors during login
     return res.status(500).json({ message: 'Server error' });

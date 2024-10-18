@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate} from 'react-router-dom';
 
+
 // Custom hook to determine if the screen width is less than a specific value
 const useMediaQuery = (query) => {
   const [matches, setMatches] = useState(false);
@@ -43,6 +44,7 @@ const Header = ({ openModal, openRegisterModal }) => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('authToken')
     localStorage.removeItem('username');
     localStorage.removeItem('role');
     localStorage.removeItem('userId');
@@ -59,29 +61,29 @@ const Header = ({ openModal, openRegisterModal }) => {
       return (
         <>
           <Link to="/" className="text-black font-medium text-base no-underline hover:text-gray-600">Home</Link>
-          <Link to="/paint" className="text-black font-medium text-base no-underline hover:text-gray-600">Paintings</Link>
-          <Link to="/photography" className="text-black font-medium text-base no-underline hover:text-gray-600">Photography</Link>
+          <Link to="/category/Painting" className="text-black font-medium text-base no-underline hover:text-gray-600">Paintings</Link>
+          <Link to="/category/Photography" className="text-black font-medium text-base no-underline hover:text-gray-600">Photography</Link>
         </>
       );
     }
-
+  
     return (
       <>
         <Link to="/" className="text-black font-medium text-base no-underline hover:text-gray-600">Home</Link>
-        <Link to="/paint" className="text-black font-medium text-base no-underline hover:text-gray-600">Paintings</Link>
-        <Link to="/photography" className="text-black font-medium text-base no-underline hover:text-gray-600">Photography</Link>
-        <Link to="/sculpture" className="text-black font-medium text-base no-underline hover:text-gray-600">Sculpture</Link>
-        <Link to="/drawings" className="text-black font-medium text-base no-underline hover:text-gray-600">Drawings</Link>
-        <Link to="/prints" className="text-black font-medium text-base no-underline hover:text-gray-600">Prints</Link>
-        <Link to="/inspiration" className="text-black font-medium text-base no-underline hover:text-gray-600">Inspiration</Link>
+        <Link to="/category/Painting" className="text-black font-medium text-base no-underline hover:text-gray-600">Paintings</Link>
+        <Link to="/category/Photography" className="text-black font-medium text-base no-underline hover:text-gray-600">Photography</Link>
+        <Link to="/category/Sculpture" className="text-black font-medium text-base no-underline hover:text-gray-600">Sculpture</Link>
+        <Link to="/category/Drawings" className="text-black font-medium text-base no-underline hover:text-gray-600">Drawings</Link>
+        <Link to="/category/Prints" className="text-black font-medium text-base no-underline hover:text-gray-600">Prints</Link>
+        <Link to="/category/Inspiration" className="text-black font-medium text-base no-underline hover:text-gray-600">Inspiration</Link>
       </>
     );
   };
-
+  
   return (
     <header className="flex flex-col md:flex-row justify-between items-center py-3 px-5 bg-white border-b border-gray-300">
       <div className="text-2xl font-bold text-black mb-3 md:mb-0">
-        <span>ART </span> <span className='block md:inline'>GALLERY</span>
+        <span>ART </span> <span className='block'>GALLERY</span>
       </div>
       <nav className="flex flex-wrap md:flex-nowrap space-x-4 md:space-x-6 mb-3 md:mb-0">
         {role !== 'admin' && renderNavLinks()}
@@ -107,7 +109,7 @@ const Header = ({ openModal, openRegisterModal }) => {
                 {role === 'artist' && (
                   <Link
                     to="/add-artwork"
-                    className="block px-4 py-2 text-black hover:bg-gray-100"
+                    className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
                     onClick={() => setDropdownVisible(false)}
                   >
                     Add Artwork
