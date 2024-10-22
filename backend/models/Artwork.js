@@ -33,7 +33,10 @@ const artworkSchema = new mongoose.Schema({
   artistId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-  }
+  },
+  show: { 
+    type: Boolean,
+    default: true },
 });
 
 const Artwork = mongoose.model('Artwork', artworkSchema);  // <-- Changed to 'Artwork'

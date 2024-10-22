@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 function AdminPage() {
   const [users, setUsers] = useState([]);
   const [artists, setArtists] = useState([]);
+  const [artworks, setArtworks] = useState([]);
   const [activeSection, setActiveSection] = useState('users'); // 'users', 'artists', 'artworks'
   const [artistSubSection, setArtistSubSection] = useState('all'); // 'all', 'approved'
   const navigate = useNavigate();
@@ -17,23 +18,43 @@ function AdminPage() {
     if (storedRole !== 'admin') {
       navigate('/'); // Redirect to home if not admin
     }
+    fetchData();
   }, [navigate]);
 
-  // Fetch users and artists on component mount
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/admin/users');
-        setUsers(response.data.users);
-        setArtists(response.data.artists);
-        console.log(response.data);
-      } catch (error) {
-        console.error('Error fetching data', error);
-      }
-    };
 
-    fetchData();
-  }, []);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/admin/users');
+      setUsers(response.data.users);
+      setArtists(response.data.artists);
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error fetching data', error);
+    }
+  };
+
+
+  const fetchArtworks = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/admin/artworks');
+      setArtworks(response.data.artworks);
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error fetching artworks', error);
+    }
+  };
+
+
+ // Check if the user is an admin and redirect if not
+ useEffect(() => {
+  const storedRole = localStorage.getItem('role');
+
+  if (storedRole !== 'admin') {
+    navigate('/'); // Redirect to home if not admin
+  }
+  fetchData();
+  fetchArtworks();
+}, [navigate]);
 
   // Approve artist and update the local state
   const approveArtist = async (artistId) => {
@@ -207,13 +228,60 @@ function AdminPage() {
     );
   };
 
-  // Render Artwork Management Section
-  const renderArtworksSection = () => (
-    <div>
-      <h3 className="text-2xl font-semibold mb-6">Artwork Management</h3>
-      <p>Artwork management functionality will go here...</p>
-    </div>
-  );
+// Toggle artwork visibility on the home page
+const toggleArtworkVisibility = async (artworkId) => {
+  try {
+    const response = await axios.put(`http://localhost:5000/api/admin/artworks/togglehomepage/${artworkId}`);
+    setArtworks(
+      artworks.map((artwork) =>
+        artwork._id === artworkId ? { ...artwork, show: !artwork.show } : artwork
+      )
+    );
+  } catch (error) {
+    console.error('Error updating artwork visibility', error);
+  }
+};
+
+// Render Artworks Section
+const renderArtworksSection = () => (
+  <div>
+    <h3 className="text-2xl font-semibold mb-6">Artwork Management</h3>
+    <table className="min-w-full bg-white border border-gray-200 shadow-lg rounded-lg">
+      <thead>
+        <tr>
+          <th className="py-3 px-6 bg-gray-200 text-left text-sm font-semibold text-gray-700">Title</th>
+          <th className="py-3 px-6 bg-gray-200 text-left text-sm font-semibold text-gray-700">Artist</th>
+          <th className="py-3 px-6 bg-gray-200 text-left text-sm font-semibold text-gray-700">Price</th>
+          <th className="py-3 px-6 bg-gray-200 text-left text-sm font-semibold text-gray-700">Show on Home Page</th>
+          <th className="py-3 px-6 bg-gray-200 text-left text-sm font-semibold text-gray-700">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {artworks.map((artwork) => (
+          <tr key={artwork._id} className="border-t border-gray-100">
+            <td className="py-4 px-6 text-sm">{artwork.title}</td>
+            <td className="py-4 px-6 text-sm">{artwork.artist}</td>
+            <td className="py-4 px-6 text-sm">{artwork.price}</td>
+            <td className="py-4 px-6 text-sm">
+              {artwork.show ? 'Yes' : 'No'}
+            </td>
+            <td className="py-4 px-6">
+              <button
+                className={`${
+                  artwork.show ? 'bg-red-500' : 'bg-green-500'
+                } hover:bg-${artwork.show ? 'red' : 'green'}-600 text-white text-sm px-4 py-2 rounded`}
+                onClick={() => toggleArtworkVisibility(artwork._id)}
+              
+              >
+                {artwork.show ? 'Hide' : 'Show'}
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
 
   return (
     <div className="flex h-screen">

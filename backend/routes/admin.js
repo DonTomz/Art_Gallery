@@ -1,5 +1,6 @@
 const express = require('express');
-const User = require('../models/User'); // Assuming the model now handles all users, artists, and admins
+const User = require('../models/User');
+const Artwork = require('../models/Artwork')
 
 const router = express.Router();
 
@@ -81,5 +82,34 @@ router.put('/user/unblock/:id', async (req, res) => {
     res.status(500).json({ message: 'Error unblocking user', error });
   }
 });
+
+// Get all artworks
+router.get('/artworks', async (req, res) => {
+  try {
+    const artworks = await Artwork.find();
+    res.json({ artworks });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching artworks' });
+  }
+});
+
+// Toggle artwork visibility on homepage
+router.put('/artworks/togglehomepage/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const artwork = await Artwork.findById(id);
+    if (!artwork) {
+      return res.status(404).json({ message: 'Artwork not found' });
+    }
+    artwork.show = !artwork.show; // Toggle the field
+    await artwork.save();
+
+    res.status(200).json({ message: 'Artwork visibility updated', artwork });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating artwork visibility', error });
+  }
+});
+
 
 module.exports = router;

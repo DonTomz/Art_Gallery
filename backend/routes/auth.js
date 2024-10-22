@@ -168,7 +168,56 @@ router.post('/api/auth/google-login', async (req, res) => {
     res.status(500).json({ message: 'Google login failed' });
   }
 });
+router.post('/google-login', async (req, res) => {
+  const { token } = req.body;
 
+  try {
+    // Verify the Google token
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+
+    // Extract user info from the payload
+    const { email, name, sub: googleId } = payload;
+
+    // Check if user exists in your database
+    let user = await User.findOne({ googleId });
+    
+    if (!user) {
+      // If user doesn't exist, create a new user in your database with 'user' role by default
+      user = new User({
+        username: name,
+        email,
+        googleId,
+        role: 'user',  // Default role for Google login users
+      });
+      await user.save();
+    }
+
+    // Check if the user has a 'user' role (normal user)
+    if (user.role !== 'user') {
+      return res.status(403).json({ message: 'Google sign-in is restricted to normal users only' });
+    }
+
+    // Generate JWT token for the user
+    const authToken = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
+
+    res.status(200).json({
+      token: authToken,
+      username: user.username,
+      userId: user._id,
+      role: user.role,
+    });
+    
+  } catch (error) {
+    console.error('Google login error:', error);
+    res.status(500).json({ message: 'Google login failed', error: error.message || error });
+  }
+});
 
 router.post('/forgot-password', async (req, res) => {
   try {

@@ -86,6 +86,7 @@ function CartPage() {
         setCartItems(updatedCart.items);
         calculateTotal(updatedCart.items);
         alert('Item removed from cart');
+        fetchCart();
       } else {
         alert('Error removing item');
       }

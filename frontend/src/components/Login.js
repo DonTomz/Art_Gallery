@@ -43,7 +43,6 @@ function Login({ show, handleClose, openRegisterModal }) {
         handleClose();  
 
         if (response.data.role === 'user') {
-          alert(response.data.message)
           navigate('/user');  
         } else if (response.data.role === 'artist') {
           navigate('/artist');  
@@ -67,38 +66,56 @@ function Login({ show, handleClose, openRegisterModal }) {
     }
   };
 
+  // const handleGoogleLoginSuccess = async (response) => {
+  //   try {
+  //     const result = await axios.post('http://localhost:5000/api/auth/google-login', {
+  //       token: response.tokenId, // Send Google token to your backend
+  //     });
+  
+  //     const { token, username, userId, role } = result.data;
+  //     localStorage.setItem('token', token);
+  //     window.location.href = '/user';
+  //   } catch (error) {
+  //     console.error('Google Login failed:', error.response?.data?.message || error.message);
+  //     alert(error.response?.data?.message || 'Google Login failed');
+  //   }
+  // };
+  
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
-      // Decode the Google JWT token
       const decoded = jwtDecode(credentialResponse?.credential);
       console.log("Google User Details: ", decoded);
-
-      // Send Google token to your backend for validation
+  
       const response = await axios.post('http://localhost:5000/api/auth/google-login', {
         token: credentialResponse.credential
       });
-
+  
       if (response.status === 200) {
+        console.log("Login successful, backend response: ", response.data);
+  
         // Store token and user info after successful login
         localStorage.setItem('authToken', response.data.token); 
         localStorage.setItem('username', response.data.username);  
         localStorage.setItem('userId', response.data.userId);
-        localStorage.setItem('role', response.data.role)  
+        localStorage.setItem('role', response.data.role); 
   
         handleClose();  
         navigate('/user');  
+  
         setTimeout(() => {
           window.location.reload();
-        }, 500);  // Delay before reloading
+        }, 500);
       } else {
+        console.error('Backend did not return a 200 status:', response);
         alert('Google login failed. Please try again.');
       }
     } catch (error) {
-      console.error('Google Login failed:', error);
+      console.error('Google Login failed:', error.message || error);
       alert('Unable to log in with Google. Please try again.');
     }
   };
 
+  
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-gray-50 bg-opacity-20 backdrop-blur-lg z-50">
     <div className="bg-white bg-opacity-20 p-6 rounded-lg w-98 flex flex-col items-center relative backdrop-blur-md shadow-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500-  z-60">
@@ -109,6 +126,7 @@ function Login({ show, handleClose, openRegisterModal }) {
             <h2 className="text-black text-2xl mb-6 font-bold">LOGIN</h2>
             <form onSubmit={handleSubmit} className="flex flex-col">
               <input
+                id='email'
                 type="email"
                 name="email"
                 placeholder="Email"
@@ -117,7 +135,8 @@ function Login({ show, handleClose, openRegisterModal }) {
                 required
                 className="p-2 mb-3 rounded text-black"
               />
-              <input
+              <input 
+                id='password'
                 type="password"
                 name="password"
                 placeholder="Password"
@@ -127,7 +146,7 @@ function Login({ show, handleClose, openRegisterModal }) {
                 className="p-2 mb-1 rounded text-black"
               />
               <p className="font-thin text-[12px] text-right underline hover:underline-offset-1" onClick={() => { handleClose(); navigate('/forgot-password'); }}>forgot password?</p>
-              <button type="submit" className="p-2 bg-black text-white rounded hover:bg-gray-800 transition-colors">Login</button>
+              <button id='loginb' type="submit" className="p-2 bg-black text-white rounded hover:bg-gray-800 transition-colors">Login</button>
             </form>
             <div className="mt-4">
               <GoogleLogin

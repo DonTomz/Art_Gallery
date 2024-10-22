@@ -44,16 +44,17 @@ const Header = ({ openModal, openRegisterModal }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken')
-    localStorage.removeItem('username');
-    localStorage.removeItem('role');
-    localStorage.removeItem('userId');
+    // localStorage.removeItem('authToken')
+    // localStorage.removeItem('username');
+    // localStorage.removeItem('role');
+    // localStorage.removeItem('userId');
+    localStorage.clear();
     setUsername(null);
     setRole(null);
     navigate('/');
-    setTimeout(() => {
-      window.location.reload();
-    }, 200);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 200);
   };
 
   const renderNavLinks = () => {
@@ -91,7 +92,7 @@ const Header = ({ openModal, openRegisterModal }) => {
       <div className="flex items-center space-x-5">
         {username ? (
           <div className="relative">
-            <button
+            <button id='username'
               onClick={toggleDropdown}
               className="text-black font-medium text-base hover:text-gray-600"
             >
@@ -99,6 +100,7 @@ const Header = ({ openModal, openRegisterModal }) => {
             </button>
             {dropdownVisible && (
               <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+              {role !== 'admin' && (
                 <Link
                   to="/profile"
                   className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
@@ -106,6 +108,7 @@ const Header = ({ openModal, openRegisterModal }) => {
                 >
                   Profile
                 </Link>
+                )}
                 {role === 'artist' && (
                   <Link
                     to="/add-artwork"
@@ -115,7 +118,7 @@ const Header = ({ openModal, openRegisterModal }) => {
                     Add Artwork
                   </Link>
                 )}
-                <button
+                <button id='logout'
                   onClick={() => {
                     handleLogout();
                     setDropdownVisible(false);
@@ -130,7 +133,7 @@ const Header = ({ openModal, openRegisterModal }) => {
           </div>
         ) : (
           <div className="flex wrap space-x-2">
-            <span
+            <span id="login"
               className="cursor-pointer text-black font-medium text-base hover:text-gray-600"
               onClick={openModal}
             >
