@@ -7,6 +7,17 @@ function CartPage() {
   const userId = localStorage.getItem('userId');
   const navigate = useNavigate();
 
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
       // Fetch cart details from backend, wrapped in useCallback to prevent re-creation on every render
       const fetchCart = useCallback(async () => {
         try {
@@ -95,10 +106,65 @@ function CartPage() {
     }
   };
 
-  const handleCheckout = () => {
-    // Implement your checkout logic here
-    alert(`Proceeding to checkout. Total amount: ₹${totalAmount}`);
+  const handleCheckout = async () => {
+    const isScriptLoaded = await loadRazorpayScript();
+    
+    if (!isScriptLoaded) {
+      alert('Failed to load Razorpay. Please try again.');
+      return;
+    }
+  
+    // Create the order on the backend
+    try {
+      const response = await fetch('http://localhost:5000/api/payment/create-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: totalAmount, // Send the total amount to backend
+          currency: 'INR', // INR is default for Indian payments
+        }),
+      });
+  
+      const orderData = await response.json(); // Get the order details like order_id
+  
+      if (!orderData.id) {
+        alert('Failed to create Razorpay order. Please try again.');
+        return;
+      }
+  
+      const options = {
+        key: process.env.REACT_APP_RAZORPAY_KEY_ID, // Your Razorpay key ID
+        amount: orderData.amount,                  // Amount in paise
+        currency: orderData.currency,
+        name: 'Your Business Name',
+        description: 'Artworks Purchase',
+        order_id: orderData.id,                    // Razorpay order ID
+        handler: function (response) {
+          alert('Payment Successful!');
+          console.log('Payment ID:', response.razorpay_payment_id);
+          console.log('Order ID:', response.razorpay_order_id);
+          console.log('Signature:', response.razorpay_signature);
+          // You can redirect to a success page or handle post-payment logic here
+        },
+        prefill: {
+          name: 'Customer Name',                   // Prefill user info
+          email: 'customer@example.com',           // Prefill user email
+        },
+        theme: {
+          color: 'red',                        // Customize the color
+        },
+      };
+  
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open(); // Open Razorpay checkout window
+    } catch (error) {
+      console.error('Error during checkout:', error);
+      alert('Failed to initiate payment. Please try again.');
+    }
   };
+  
 
   return (
     <div className="container mx-auto py-10">

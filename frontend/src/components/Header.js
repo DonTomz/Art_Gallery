@@ -52,9 +52,9 @@ const Header = ({ openModal, openRegisterModal }) => {
     setUsername(null);
     setRole(null);
     navigate('/');
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 200);
+    setTimeout(() => {
+      window.location.reload();
+    }, 200);
   };
 
   const renderNavLinks = () => {
@@ -92,7 +92,7 @@ const Header = ({ openModal, openRegisterModal }) => {
       <div className="flex items-center space-x-5">
         {username ? (
           <div className="relative">
-            <button id='username'
+            <button id='usernamed'
               onClick={toggleDropdown}
               className="text-black font-medium text-base hover:text-gray-600"
             >
@@ -110,6 +110,7 @@ const Header = ({ openModal, openRegisterModal }) => {
                 </Link>
                 )}
                 {role === 'artist' && (
+                  <>
                   <Link
                     to="/add-artwork"
                     className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
@@ -117,6 +118,14 @@ const Header = ({ openModal, openRegisterModal }) => {
                   >
                     Add Artwork
                   </Link>
+                  <Link
+                  to="/artist/artworks"
+                  className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
+                  onClick={() => setDropdownVisible(false)}
+                >
+                  Your works
+                </Link>
+                </>
                 )}
                 <button id='logout'
                   onClick={() => {

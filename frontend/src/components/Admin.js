@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import Footer from './Footer';
 
 function AdminPage() {
   const [users, setUsers] = useState([]);
@@ -11,15 +11,16 @@ function AdminPage() {
   const [artistSubSection, setArtistSubSection] = useState('all'); // 'all', 'approved'
   const navigate = useNavigate();
 
-  // Check if the user is an admin and redirect if not
-  useEffect(() => {
-    const storedRole = localStorage.getItem('role');
+// Check if the user is an admin and redirect if not
+useEffect(() => {
+  const storedRole = localStorage.getItem('role');
 
-    if (storedRole !== 'admin') {
-      navigate('/'); // Redirect to home if not admin
-    }
-    fetchData();
-  }, [navigate]);
+  if (storedRole !== 'admin') {
+    navigate('/'); // Redirect to home if not admin
+  }
+  fetchData();
+  fetchArtworks();
+}, [navigate]);
 
 
   const fetchData = async () => {
@@ -45,16 +46,7 @@ function AdminPage() {
   };
 
 
- // Check if the user is an admin and redirect if not
- useEffect(() => {
-  const storedRole = localStorage.getItem('role');
-
-  if (storedRole !== 'admin') {
-    navigate('/'); // Redirect to home if not admin
-  }
-  fetchData();
-  fetchArtworks();
-}, [navigate]);
+ 
 
   // Approve artist and update the local state
   const approveArtist = async (artistId) => {
@@ -285,9 +277,8 @@ const renderArtworksSection = () => (
 
   return (
     <div className="flex h-screen">
-      {/* Prevent Back */}
       {/* Left Sidebar */}
-      <div className="w-64 bg-gray-800 text-white flex-shrink-0 p-6">
+      <div className="w-64 bg-gray-800 text-white flex-shrink-0 p-6 overflow-y-auto">
         <h2 className="text-2xl font-bold mb-8">Admin Dashboard</h2>
         <ul className="space-y-4">
           <li
@@ -310,15 +301,19 @@ const renderArtworksSection = () => (
           </li>
         </ul>
       </div>
-
+  
       {/* Main Content */}
-      <div className="flex-grow p-6">
+      <div className="flex-grow p-6 overflow-y-auto">
         {activeSection === 'users' && renderUsersSection()}
         {activeSection === 'artists' && renderArtistsSection()}
         {activeSection === 'artworks' && renderArtworksSection()}
       </div>
     </div>
   );
+  
+  
+  
+  
 }
 
 export default AdminPage;

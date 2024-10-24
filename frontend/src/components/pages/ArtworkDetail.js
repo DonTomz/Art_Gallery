@@ -31,41 +31,76 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
 
 
 
-  const handleAddToCart = async (artwork) => {
-    const userId = localStorage.getItem('userId'); // Assuming you store the logged-in user ID in localStorage
+  // const handleAddToCart = async (artwork) => {
+  //   const userId = localStorage.getItem('userId'); 
   
-    if (!userId) {
-      openModal(); // Show login popup
-      return;
-    }
+  //   if (!userId) {
+  //     openModal(); 
+  //     return;
+  //   }
 
-    if (quantity > artwork.stock) {
-      alert('Cannot add more items than available in stock.');
-      return;
-    }
+  //   if (quantity > artwork.stock) {
+  //     alert('Cannot add more items than available in stock.');
+  //     return;
+  //   }
   
-    try {
-      const response = await fetch('http://localhost:5000/api/artworks/cart/add', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, artworkId: artwork._id, quantity }) // Include the quantity in the request
-      });
+  //   try {
+  //     const response = await fetch('http://localhost:5000/api/artworks/cart/add', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ userId, artworkId: artwork._id, quantity }) 
+  //     });
   
-      if (response.ok) {
-        const cart = await response.json();
-        console.log('Cart updated:', cart);
-        alert('Artwork added to cart');
-      } else {
-        alert('Failed to add to cart');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-  
-  // const handleAddToWishlist = () => {
-  //   console.log('Added to wishlist:', artwork.title);
+  //     if (response.ok) {
+  //       const cart = await response.json();
+  //       console.log('Cart updated:', cart);
+  //       alert('Artwork added to cart');
+  //     } else {
+  //       alert('Failed to add to cart');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //   }
   // };
+  const handleAddToCart = async (artwork) => {
+  const userId = localStorage.getItem('userId'); // Assuming you store the logged-in user ID in localStorage
+
+  if (!userId) {
+    openModal(); // Show login popup
+    return;
+  }
+
+  if (quantity > artwork.stock) {
+    alert('Cannot add more items than available in stock.');
+    return;
+  }
+
+  try {
+    const response = await fetch('http://localhost:5000/api/artworks/cart/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, artworkId: artwork._id, quantity }) // Include the quantity in the request
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      // Check the message from the server response
+      if (data.message === 'Artwork already in the cart') {
+        alert('Artwork already in the cart');
+      } else {
+        console.log('Cart updated:', data);
+        alert('Artwork added to cart');
+      }
+    } else {
+      alert('Failed to add to cart');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+
 
   const handleAddToWishlist = async (artworkId) => {
     try {
@@ -100,21 +135,25 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
       <div className="flex flex-col lg:flex-row gap-10">
         {/* Artwork Image Section */}
         <div className="lg:w-1/2 relative">
-          <div className="relative overflow-hidden rounded-lg">
-            <img
-              src={`http://localhost:5000/uploads/${artwork.imageUrl}`}
-              alt={artwork.title}
-              className="w-full h-auto object-contain max-h-[500px]"
-            />
-            {/* Wishlist Icon positioned at the top-right corner */}
-            <button
-              onClick={()=>handleAddToWishlist(artwork._id)}
-              className="absolute top-2 right-2 text-black hover:text-white text-xl transition duration-100"
-            >
-              <FaHeart />
-            </button>
-          </div>
-        </div>
+  <div className="relative overflow-hidden rounded-lg h-[400px] lg:h-[500px] group"> {/* Group for hover effect */}
+    <img
+      src={`http://localhost:5000/uploads/${artwork.imageUrl}`}
+      alt={artwork.title}
+      className="w-full h-full object-cover transform transition-transform duration-400 group-hover:scale-110" 
+      // Scale effect on hover
+    />
+    {/* Wishlist Icon positioned at the top-right corner */}
+    <button
+      onClick={() => handleAddToWishlist(artwork._id)}
+      className="absolute top-2 right-2 text-black hover:text-white text-xl transition duration-100"
+    >
+      <FaHeart />
+    </button>
+  </div>
+</div>
+
+
+
 
         {/* Artwork Details Section */}
         <div className="lg:w-1/2 flex flex-col justify-between">

@@ -50,21 +50,24 @@ router.post('/add', upload.single('image'), async (req, res) => {
   }
 });
 
-// Route to fetch all artworks
+
+
+// Route to fetch artworks where show is true
 router.get('/', async (req, res) => {
   try {
-    const artworks = await Artwork.find();
+    const artworks = await Artwork.find({ show: true }); // Fetch only artworks where show is true
     res.json(artworks);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch artworks' });
   }
 });
 
+
 // Get artworks by category
 router.get('/category/:category', async (req, res) => {
   try {
     const category = req.params.category;
-    const artworks = await Artwork.find({ category });
+    const artworks = await Artwork.find({ category, show: true });
     
     if (!artworks || artworks.length === 0) {
       return res.status(404).json({ message: 'No artworks found for this category' });
@@ -79,6 +82,7 @@ router.get('/category/:category', async (req, res) => {
 
 
 
+
 router.get('/artwork/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -89,26 +93,73 @@ router.get('/artwork/:id', async (req, res) => {
   }
 });
 
+// Route to get all artworks uploaded by the logged-in artist
+router.get('/mine/:id',  async (req, res) => {
+  const artistId = req.params.id;
+  try {
+     // Assuming `req.user` has the logged-in artist's ID
+    console.log(artistId)
+
+    // Find artworks uploaded by the artist
+    const artworks = await Artwork.find({ artistId: artistId });
+
+    if (artworks.length === 0) {
+      return res.status(404).json({ message: 'No artworks found for this artist' });
+    }
+
+    res.status(200).json({ artworks });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching artworks', error });
+  }
+});
 
 
+
+
+// router.post('/cart/add', async (req, res) => {
+//   const { userId, artworkId, quantity } = req.body;
+//   try {
+//     let cart = await Cartdata.findOne({ userId });
+    
+//     if (!cart) {
+//       cart = new Cartdata({ userId, items: [{ artworkId, quantity }] });
+//     } else {
+//       const itemIndex = cart.items.findIndex(item => item.artworkId.toString() === artworkId);
+//       if (itemIndex !== -1) {
+//         cart.items[itemIndex].quantity += quantity;
+//       } else {
+//         cart.items.push({ artworkId, quantity });
+//       }
+//     }
+//     await cart.save();
+//     res.status(200).json(cart);
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error adding to cart' });
+//   }
+// });
 
 router.post('/cart/add', async (req, res) => {
   const { userId, artworkId, quantity } = req.body;
-  console.log(req.body)
-
   try {
     let cart = await Cartdata.findOne({ userId });
-    
+
     if (!cart) {
+      // If the cart doesn't exist, create a new one and add the item
       cart = new Cartdata({ userId, items: [{ artworkId, quantity }] });
     } else {
+      // Find if the item is already in the cart
       const itemIndex = cart.items.findIndex(item => item.artworkId.toString() === artworkId);
+
       if (itemIndex !== -1) {
-        cart.items[itemIndex].quantity += quantity;
+        // If the item is found in the cart, send a message indicating it is already in the cart
+        return res.status(200).json({ message: 'Artwork already in the cart' });
       } else {
+        // If the item is not in the cart, add it
         cart.items.push({ artworkId, quantity });
       }
     }
+
+    // Save the cart after adding the new item
     await cart.save();
     res.status(200).json(cart);
   } catch (error) {

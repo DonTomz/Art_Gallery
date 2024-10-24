@@ -14,13 +14,15 @@ function AddArtwork() {
   const [imageFile, setImageFile] = useState(null); // State to track image file
   const navigate = useNavigate();
   const userId = localStorage.getItem('userId');
+  const role = localStorage.getItem('role')
+
 
   // Check if user is logged in
   useEffect(() => {
-    if (!userId) {
+    if (!userId || role !== 'artist') {
       navigate('/'); // Redirect to login if not logged in
     }
-  }, [userId, navigate]);
+  }, [userId, role, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
