@@ -59,6 +59,16 @@ const userSchema = new mongoose.Schema({
       ref: 'Artwork', // Referencing the Artwork model
     },
   ],
+  addresses: [{
+    firstName: String,
+    lastName: String,
+    address: String,
+    phoneNumber: String,
+    country: String,
+    state: String,
+    district: String,
+    pincode: String
+  }]
 }, { timestamps: true });
 
 // Hash the password before saving the user

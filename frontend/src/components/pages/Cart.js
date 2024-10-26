@@ -8,16 +8,6 @@ function CartPage() {
   const navigate = useNavigate();
 
 
-  const loadRazorpayScript = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
       // Fetch cart details from backend, wrapped in useCallback to prevent re-creation on every render
       const fetchCart = useCallback(async () => {
         try {
@@ -106,130 +96,107 @@ function CartPage() {
     }
   };
 
-  const handleCheckout = async () => {
-    const isScriptLoaded = await loadRazorpayScript();
-    
-    if (!isScriptLoaded) {
-      alert('Failed to load Razorpay. Please try again.');
-      return;
-    }
-  
-    // Create the order on the backend
-    try {
-      const response = await fetch('http://localhost:5000/api/payment/create-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: totalAmount, // Send the total amount to backend
-          currency: 'INR', // INR is default for Indian payments
-        }),
-      });
-  
-      const orderData = await response.json(); // Get the order details like order_id
-  
-      if (!orderData.id) {
-        alert('Failed to create Razorpay order. Please try again.');
-        return;
-      }
-  
-      const options = {
-        key: process.env.REACT_APP_RAZORPAY_KEY_ID, // Your Razorpay key ID
-        amount: orderData.amount,                  // Amount in paise
-        currency: orderData.currency,
-        name: 'Your Business Name',
-        description: 'Artworks Purchase',
-        order_id: orderData.id,                    // Razorpay order ID
-        handler: function (response) {
-          alert('Payment Successful!');
-          console.log('Payment ID:', response.razorpay_payment_id);
-          console.log('Order ID:', response.razorpay_order_id);
-          console.log('Signature:', response.razorpay_signature);
-          // You can redirect to a success page or handle post-payment logic here
-        },
-        prefill: {
-          name: 'Customer Name',                   // Prefill user info
-          email: 'customer@example.com',           // Prefill user email
-        },
-        theme: {
-          color: 'red',                        // Customize the color
-        },
-      };
-  
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open(); // Open Razorpay checkout window
-    } catch (error) {
-      console.error('Error during checkout:', error);
-      alert('Failed to initiate payment. Please try again.');
-    }
+  const handleCheckout = () => {
+    navigate('/checkout', { state: { cartItems, totalAmount } });
   };
   
 
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl font-bold mb-5">Your Cart</h1>
-      
+  
       {cartItems.length === 0 ? (
         <p>Your cart is empty.</p>
       ) : (
-        <div>
-          {cartItems.map(item => (
-            <div key={item.artworkId._id} className="flex items-center justify-between mb-4 p-4 bg-gray-100 rounded-lg">
-              <div className="flex items-center gap-4">
-                <img 
-                  src={`http://localhost:5000/uploads/${item.artworkId.imageUrl}`} 
-                  alt={item.artworkId.title} 
-                  className="w-20 h-20 object-contain rounded-lg" 
-                />
-                <div>
-                  <h2 className="text-xl font-semibold">{item.artworkId.title}</h2>
-                  <p className="text-sm">Artist: {item.artworkId.artist}</p>
-                  <p className="text-sm">Price: ₹{item.artworkId.price}</p>
-                  
-                  {item.artworkId.stock === null || item.artworkId.stock === 0 ? (
-                    <p className="text-red-500 font-semibold">Sold Out</p>
-                  ) : (
-                    <p className="text-sm">Available Stock: {item.artworkId.stock}</p>
-                  )}
+        <div className="flex gap-10">
+          {/* Left Panel: Cart Items */}
+          <div className="w-2/3 h-screen overflow-y-auto pr-5 hide-scrollbar">
+            {cartItems.map((item) => (
+              <div
+                key={item.artworkId._id}
+                className="flex items-center justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow-md"
+              >
+                <div className="flex items-center gap-4">
+                  <img
+                    src={`http://localhost:5000/uploads/${item.artworkId.imageUrl}`}
+                    alt={item.artworkId.title}
+                    className="w-20 h-20 object-contain rounded-lg"
+                  />
+                  <div>
+                    <h2 className="text-xl font-semibold">{item.artworkId.title}</h2>
+                    <p className="text-sm">Artist: {item.artworkId.artist}</p>
+                    <p className="text-sm">Price: ₹{item.artworkId.price}</p>
+  
+                    {item.artworkId.stock === null || item.artworkId.stock === 0 ? (
+                      <p className="text-red-500 font-semibold">Sold Out</p>
+                    ) : (
+                      <p className="text-sm">Available Stock: {item.artworkId.stock}</p>
+                    )}
+                  </div>
+                </div>
+  
+                <div className="flex items-center gap-4">
+                  <input
+                    type="number"
+                    min="1"
+                    max={item.artworkId.stock}
+                    value={item.quantity}
+                    onChange={(e) =>
+                      handleQuantityChange(
+                        item.artworkId._id,
+                        parseInt(e.target.value),
+                        item.artworkId.stock
+                      )
+                    }
+                    className="w-16 border rounded-lg p-2 text-center"
+                    disabled={
+                      item.artworkId.stock === null || item.artworkId.stock === 0
+                    } // Disable if out of stock
+                    onKeyDown={(e) => e.preventDefault()} // Disable manual input
+                  />
+                  <button
+                    onClick={() => handleRemoveItem(item.artworkId._id)}
+                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+                  >
+                    Remove
+                  </button>
                 </div>
               </div>
+            ))}
+          </div>
   
-              <div className="flex items-center gap-4">
-                <input
-                  type="number"
-                  min="1"
-                  max={item.artworkId.stock}
-                  value={item.quantity}
-                  onChange={(e) => handleQuantityChange(item.artworkId._id, parseInt(e.target.value), item.artworkId.stock)}
-                  className="w-16 border rounded-lg p-2 text-center"
-                  disabled={item.artworkId.stock === null || item.artworkId.stock === 0} // Disable if out of stock
-                  onKeyDown={(e) => e.preventDefault()} // Disable manual input
-                />
-                <button
-                  onClick={() => handleRemoveItem(item.artworkId._id)}
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
-                >
-                  Remove
-                </button>
-              </div>
+          {/* Right Panel: Total Price & Checkout */}
+          <div className="w-1/3 p-6 bg-gray-50 rounded-lg shadow-md sticky top-20">
+            <h2 className="text-2xl font-bold mb-5">Order Summary</h2>
+            <div className="mb-4">
+              <p className="text-lg">Total Items: {cartItems.length}</p>
+              <p className="text-xl font-semibold mt-2">Total Amount: ₹{totalAmount}</p>
             </div>
-          ))}
   
-          <div className="mt-5 text-right">
-            <p className="text-xl font-semibold">Total Amount: ₹{totalAmount}</p>
             <button
               onClick={handleCheckout}
-              className="mt-4 bg-yellow-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-yellow-600 transition"
-              disabled={cartItems.every(item => item.artworkId.stock === 0 || item.artworkId.stock === null)} // Disable checkout if all items are out of stock
+              className="w-full mt-6 bg-yellow-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-yellow-600 transition"
+              disabled={cartItems.every(
+                (item) => item.artworkId.stock === 0 || item.artworkId.stock === null
+              )} // Disable checkout if all items are out of stock
             >
               Checkout
             </button>
+  
+            {/* Extra Details for Design */}
+            <div className="mt-6 p-4 bg-gray-100 rounded-lg text-gray-700">
+              <p className="text-sm">
+                Enjoy free shipping on orders over ₹5000. Your order will be delivered within 5-7 business days.
+              </p>
+            </div>
           </div>
         </div>
       )}
     </div>
   );
+  
+  
+  
   
 }
 

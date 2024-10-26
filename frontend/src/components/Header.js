@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate} from 'react-router-dom';
-
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Custom hook to determine if the screen width is less than a specific value
 const useMediaQuery = (query) => {
@@ -23,8 +22,8 @@ const Header = ({ openModal, openRegisterModal }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const navigate = useNavigate();
   const [role, setRole] = useState(null);
-  // const location = useLocation();
-  
+  const dropdownRef = useRef(null);
+
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
@@ -36,6 +35,20 @@ const Header = ({ openModal, openRegisterModal }) => {
     if (storedRole) {
       setRole(storedRole);
     }
+
+    // Add click event listener to close dropdown when clicking outside
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownVisible(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   // Toggle dropdown visibility
@@ -44,10 +57,6 @@ const Header = ({ openModal, openRegisterModal }) => {
   };
 
   const handleLogout = () => {
-    // localStorage.removeItem('authToken')
-    // localStorage.removeItem('username');
-    // localStorage.removeItem('role');
-    // localStorage.removeItem('userId');
     localStorage.clear();
     setUsername(null);
     setRole(null);
@@ -67,7 +76,7 @@ const Header = ({ openModal, openRegisterModal }) => {
         </>
       );
     }
-  
+
     return (
       <>
         <Link to="/" className="text-black font-medium text-base no-underline hover:text-gray-600">Home</Link>
@@ -80,7 +89,7 @@ const Header = ({ openModal, openRegisterModal }) => {
       </>
     );
   };
-  
+
   return (
     <header className="flex flex-col md:flex-row justify-between items-center py-3 px-5 bg-white border-b border-gray-300">
       <div className="text-2xl font-bold text-black mb-3 md:mb-0">
@@ -91,7 +100,7 @@ const Header = ({ openModal, openRegisterModal }) => {
       </nav>
       <div className="flex items-center space-x-5">
         {username ? (
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <button id='usernamed'
               onClick={toggleDropdown}
               className="text-black font-medium text-base hover:text-gray-600"
@@ -100,32 +109,41 @@ const Header = ({ openModal, openRegisterModal }) => {
             </button>
             {dropdownVisible && (
               <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-              {role !== 'admin' && (
-                <Link
-                  to="/profile"
-                  className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
-                  onClick={() => setDropdownVisible(false)}
-                >
-                  Profile
-                </Link>
+                {role !== 'admin' && (
+                  <>
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
+                      onClick={() => setDropdownVisible(false)}
+                    >
+                      <i className="fas fa-user mr-2"></i>Profile
+                    </Link>
+                    <Link
+                      to="/myorders"
+                      className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
+                      onClick={() => setDropdownVisible(false)}
+                    >
+                      <i className="fas fa-box mr-2"></i>My Orders
+                    </Link>
+                  </>
                 )}
                 {role === 'artist' && (
                   <>
-                  <Link
-                    to="/add-artwork"
-                    className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
-                    onClick={() => setDropdownVisible(false)}
-                  >
-                    Add Artwork
-                  </Link>
-                  <Link
-                  to="/artist/artworks"
-                  className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
-                  onClick={() => setDropdownVisible(false)}
-                >
-                  Your works
-                </Link>
-                </>
+                    <Link
+                      to="/add-artwork"
+                      className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
+                      onClick={() => setDropdownVisible(false)}
+                    >
+                      <i className="fas fa-plus mr-2"></i>Add Artwork
+                    </Link>
+                    <Link
+                      to="/artist/artworks"
+                      className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
+                      onClick={() => setDropdownVisible(false)}
+                    >
+                      <i className="fas fa-palette mr-2"></i>Your Works
+                    </Link>
+                  </>
                 )}
                 <button id='logout'
                   onClick={() => {
@@ -134,11 +152,10 @@ const Header = ({ openModal, openRegisterModal }) => {
                   }}
                   className="block w-full text-left px-4 py-2 text-black hover:bg-gray-100"
                 >
-                  Logout
+                  <i className="fas fa-sign-out-alt mr-2"></i>Logout
                 </button>
               </div>
             )}
-
           </div>
         ) : (
           <div className="flex wrap space-x-2">
@@ -164,9 +181,6 @@ const Header = ({ openModal, openRegisterModal }) => {
             </Link>
             <Link to="/cart" className="relative text-black text-xl hover:text-gray-600">
               <i className="fas fa-shopping-cart"></i>
-              {/* <span className="absolute bottom-4 left font-medium bg-red-500 text-black text-xs px-2 py-1 rounded-full">
-                0
-              </span> */}
             </Link>
           </div>
         )}

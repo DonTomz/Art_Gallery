@@ -46,7 +46,7 @@ const ArtistArtworks = () => {
                   to={`/artist/artworks/edit/${artwork._id}`}
                   className="inline-block bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-200"
                 >
-                  Edit Artwork
+                  Edit 
                 </Link>
               </div>
             </div>

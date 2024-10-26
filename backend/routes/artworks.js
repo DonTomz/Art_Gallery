@@ -3,7 +3,7 @@ const Artwork = require('../models/Artwork');
 const multer = require('multer');
 const path = require('path');
 const Cartdata = require('../models/Cartdata');
-const User = require('../models/User')
+const User = require('../models/User');
 
 const router = express.Router();
 
@@ -320,6 +320,18 @@ router.post('/wishlist/remove', async (req, res) => {
   } catch (error) {
     console.error('Error removing from wishlist:', error);
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Endpoint to clear the cart for a user
+router.delete('/cart/clear/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    // Clear the cart for the user
+    await Cartdata.deleteMany({ userId: userId });
+    res.status(200).json({ message: 'Cart cleared successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error clearing cart', error });
   }
 });
 

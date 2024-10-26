@@ -4,5 +4,16 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [function ({ addUtilities }) {
+    addUtilities({
+      '.hide-scrollbar': {
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        'scrollbar-width': 'none',
+        '-ms-overflow-style': 'none',
+        '&::-webkit-scrollbar': {
+          display: 'none',
+        },
+      },
+    });
+  },],
 }

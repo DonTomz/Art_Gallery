@@ -20,7 +20,9 @@ import Category from './components/pages/Category';
 import WishlistPage from './components/pages/WishList';
 import EditArtwork from './components/pages/EditArtwork';
 import ArtistArtworks from './components/ArtistArtworks';
-// import PaymentPage from './components/pages/Payment';
+import CheckoutPage from './components/pages/Checkout';
+import SuccessPage from './components/pages/Success';
+import MyOrdersPage from './components/pages/MyOrders';
 
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -66,7 +68,9 @@ function App() {
             <Route path ="/wishlist" element={<WishlistPage/>}/>
             <Route path="/artist/artworks/edit/:id" element={<EditArtwork />} />
             <Route path="/artist/artworks" element={<ArtistArtworks />} />
-            {/* <Route path='/payment' element ={<PaymentPage/>}/> */}
+            <Route path='/checkout' element ={<CheckoutPage/>}/>
+            <Route path="/success" element={<SuccessPage />} />
+            <Route path="/myorders" element={<MyOrdersPage />} />
           </Routes>
         </main>
         <Footer />
