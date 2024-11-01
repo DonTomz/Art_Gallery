@@ -65,6 +65,8 @@ router.post('/login', async (req, res) => {
     if (!user) {
       console.log("User not found with email:", email); // Debug: Log if user is not found
       return res.status(401).json({ message: 'User not found' });
+
+      
     }
 
     // If the user is an artist, check if they are approved
