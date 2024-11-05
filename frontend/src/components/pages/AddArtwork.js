@@ -80,6 +80,7 @@ function AddArtwork() {
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">Title</label>
             <input
+              id="title"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               name="title"
               value={artwork.title}
@@ -92,6 +93,7 @@ function AddArtwork() {
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="artist">Artist</label>
             <input
+              id="artist"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               name="artist"
               value={artwork.artist}
@@ -104,6 +106,7 @@ function AddArtwork() {
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">Description</label>
             <textarea
+              id="description"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               name="description"
               value={artwork.description}
@@ -117,6 +120,7 @@ function AddArtwork() {
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">Price (₹)</label>
             <input
+              id="price"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               name="price"
               value={artwork.price}
@@ -130,6 +134,7 @@ function AddArtwork() {
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="stock">Stock Available</label>
             <input
+              id="stock"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               name="stock"
               value={artwork.stock}
@@ -143,6 +148,7 @@ function AddArtwork() {
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="imageUrl">Upload Image</label>
             <input
+              id="imageUrl"
               type="file"
               accept="image/*"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -154,6 +160,7 @@ function AddArtwork() {
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="category">Category</label>
             <select
+              id="category"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               name="category"
               value={artwork.category}
@@ -171,7 +178,8 @@ function AddArtwork() {
           </div>
           {/* Submit Button */}
           <button
-            type="submit"
+            
+            type="submit" id="addartworkbtn"
             className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
           >
             Add Artwork

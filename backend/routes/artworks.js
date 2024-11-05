@@ -93,6 +93,8 @@ router.get('/artwork/:id', async (req, res) => {
   }
 });
 
+
+
 // Route to get all artworks uploaded by the logged-in artist
 router.get('/mine/:id',  async (req, res) => {
   const artistId = req.params.id;
@@ -115,32 +117,94 @@ router.get('/mine/:id',  async (req, res) => {
 
 
 
-
-// router.post('/cart/add', async (req, res) => {
-//   const { userId, artworkId, quantity } = req.body;
-//   try {
-//     let cart = await Cartdata.findOne({ userId });
+router.get('/:id', async (req, res) => {
+  try {
+    const artwork = await Artwork.findById(req.params.id);
     
-//     if (!cart) {
-//       cart = new Cartdata({ userId, items: [{ artworkId, quantity }] });
-//     } else {
-//       const itemIndex = cart.items.findIndex(item => item.artworkId.toString() === artworkId);
-//       if (itemIndex !== -1) {
-//         cart.items[itemIndex].quantity += quantity;
-//       } else {
-//         cart.items.push({ artworkId, quantity });
-//       }
-//     }
-//     await cart.save();
-//     res.status(200).json(cart);
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error adding to cart' });
-//   }
-// });
+    if (!artwork) {
+      return res.status(404).json({ message: 'Artwork not found' });
+    }
+    res.json(artwork);
+  } catch (error) {
+    console.error('Error fetching artwork:', error);
+    
+    // Handle invalid ID format
+    if (error.kind === 'ObjectId') {
+      return res.status(400).json({ message: 'Invalid artwork ID format' });
+    }
+
+    res.status(500).json({ message: 'Error fetching artwork', error: error.message });
+  }
+});
+
+module.exports = router;
+
+// Edit artwork route
+router.put('/edit/:id', upload.single('image'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = {
+      title: req.body.title,
+      artist: req.body.artist,
+      description: req.body.description,
+      category: req.body.category,
+      price: req.body.price,
+    };
+
+    // If a new image was uploaded, update the imageUrl
+    if (req.file) {
+      updateData.imageUrl = req.file.filename;
+    }
+
+    // Find and update the artwork
+    const artwork = await Artwork.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true, runValidators: true } // Return updated document and run schema validators
+    );
+
+    if (!artwork) {
+      return res.status(404).json({ message: 'Artwork not found' });
+    }
+
+    res.json(artwork);
+  } catch (error) {
+    console.error('Error updating artwork:', error);
+    
+    if (error.kind === 'ObjectId') {
+      return res.status(400).json({ message: 'Invalid artwork ID format' });
+    }
+
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Validation error', error: error.message });
+    }
+
+    res.status(500).json({ message: 'Error updating artwork', error: error.message });
+  }
+});
+
+
+
 
 router.post('/cart/add', async (req, res) => {
   const { userId, artworkId, quantity } = req.body;
   try {
+    // First, fetch the artwork to check the artist
+    const artwork = await Artwork.findById(artworkId);
+    
+    if (!artwork) {
+      return res.status(404).json({ message: 'Artwork not found' });
+    }
+
+    // Check if the logged-in user is the artist of the artwork
+    if (artwork.artistId === userId) {
+      return res.status(403).json({ 
+        message: 'You cannot purchase your own artwork',
+        error: 'SELF_PURCHASE_DENIED'
+      });
+    }
+
+    // Continue with cart operations if the user is not the artist
     let cart = await Cartdata.findOne({ userId });
 
     if (!cart) {
@@ -148,22 +212,36 @@ router.post('/cart/add', async (req, res) => {
       cart = new Cartdata({ userId, items: [{ artworkId, quantity }] });
     } else {
       // Find if the item is already in the cart
-      const itemIndex = cart.items.findIndex(item => item.artworkId.toString() === artworkId);
+      const itemIndex = cart.items.findIndex(item => 
+        item.artworkId.toString() === artworkId
+      );
 
       if (itemIndex !== -1) {
         // If the item is found in the cart, send a message indicating it is already in the cart
-        return res.status(200).json({ message: 'Artwork already in the cart' });
+        return res.status(200).json({ 
+          message: 'Artwork already in the cart',
+          error: 'ALREADY_IN_CART'
+        });
       } else {
         // If the item is not in the cart, add it
         cart.items.push({ artworkId, quantity });
       }
     }
 
-    // Save the cart after adding the new item
+    // Save the cart
     await cart.save();
-    res.status(200).json(cart);
+    
+    res.status(200).json({ 
+      message: 'Artwork added to cart successfully',
+      cart 
+    });
+
   } catch (error) {
-    res.status(500).json({ message: 'Error adding to cart' });
+    console.error('Error adding to cart:', error);
+    res.status(500).json({ 
+      message: 'Error adding artwork to cart', 
+      error: error.message 
+    });
   }
 });
 

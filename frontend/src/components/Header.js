@@ -134,7 +134,7 @@ const Header = ({ openModal, openRegisterModal }) => {
                       className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
                       onClick={() => setDropdownVisible(false)}
                     >
-                      <i className="fas fa-plus mr-2"></i>Add Artwork
+                      <i id="addartwork" className="fas fa-plus mr-2"></i>Add Artwork
                     </Link>
                     <Link
                       to="/artist/artworks"

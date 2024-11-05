@@ -21,7 +21,7 @@ const EditArtwork = () => {
     const fetchArtwork = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/artworks/${id}`);
-        setArtwork(response.data.artwork);
+        setArtwork(response.data);
       } catch (err) {
         setError('Error fetching artwork');
       }
@@ -37,7 +37,7 @@ const EditArtwork = () => {
     e.preventDefault();
     try {
       await axios.put(`http://localhost:5000/api/artworks/edit/${id}`, artwork);
-      navigate('/artist/dashboard'); // Redirect to artist dashboard after successful edit
+      navigate('/artist/artworks'); // Redirect to artist dashboard after successful edit
     } catch (err) {
       setError('Error updating artwork');
     }
