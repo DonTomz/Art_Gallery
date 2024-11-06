@@ -180,7 +180,7 @@ const Header = ({ openModal, openRegisterModal }) => {
               <i className="fas fa-heart"></i>
             </Link>
             <Link to="/cart" className="relative text-black text-xl hover:text-gray-600">
-              <i className="fas fa-shopping-cart"></i>
+              <i id = "cart" className="fas fa-shopping-cart"></i>
             </Link>
           </div>
         )}

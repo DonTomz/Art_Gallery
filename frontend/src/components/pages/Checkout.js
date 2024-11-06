@@ -326,8 +326,9 @@ function CheckoutPage() {
                 {savedAddresses.map((addr) => (
                   <div key={addr._id} className="flex items-center mb-2">
                     <input
+                      id = "address"
                       type="radio"
-                      id={addr._id}
+                      // id={addr._id}
                       name="address"
                       value={addr._id}
                       checked={selectedAddressId === addr._id}
@@ -494,6 +495,7 @@ function CheckoutPage() {
             {/* Payment Button */}
             <div className="mt-8">
               <button
+                id='payment'
                 onClick={handlePayment}
                 className="w-full bg-blue-600 text-white px-6 py-3 rounded-md font-semibold text-lg hover:bg-blue-700 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={cartItems.length === 0}

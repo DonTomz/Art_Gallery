@@ -174,6 +174,7 @@ function CartPage() {
             </div>
   
             <button
+              id = "checkout"
               onClick={handleCheckout}
               className="w-full mt-6 bg-yellow-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-yellow-600 transition"
               disabled={cartItems.every(
