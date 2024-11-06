@@ -16,7 +16,7 @@ const Category = () => {
     const fetchArtworks = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://localhost:5000/api/artworks/category/${category}`);
+        const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/artworks/category/${category}`);
         setArtworks(response.data);
         setLoading(false);
       } catch (error) {
@@ -49,7 +49,7 @@ const Category = () => {
                 onClick={() => handleArtworkClick(artwork._id)}
               >
                 <img
-                  src={`http://localhost:5000/uploads/${artwork.imageUrl}`}
+                  src={`https://art-gallery-kmgs.onrender.com/uploads/${artwork.imageUrl}`}
                   alt={artwork.title}
                   className="w-full h-48 object-cover"
                 />

@@ -54,7 +54,7 @@ function AddArtwork() {
     formData.append('artistId', userId); // Append the artistId from session
 
     try {
-      const response = await fetch('http://localhost:5000/api/artworks/add', {
+      const response = await fetch('https://art-gallery-kmgs.onrender.com/api/artworks/add', {
         method: 'POST',
         body: formData, // Send formData
       });

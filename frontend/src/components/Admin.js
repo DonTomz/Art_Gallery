@@ -25,7 +25,7 @@ useEffect(() => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/users');
+      const response = await axios.get('https://art-gallery-kmgs.onrender.com/api/admin/users');
       setUsers(response.data.users);
       setArtists(response.data.artists);
       console.log(response.data);
@@ -37,7 +37,7 @@ useEffect(() => {
 
   const fetchArtworks = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/artworks');
+      const response = await axios.get('https://art-gallery-kmgs.onrender.com/api/admin/artworks');
       setArtworks(response.data.artworks);
       console.log(response.data);
     } catch (error) {
@@ -51,7 +51,7 @@ useEffect(() => {
   // Approve artist and update the local state
   const approveArtist = async (artistId) => {
     try {
-      await axios.put(`http://localhost:5000/api/admin/artist/approve/${artistId}`);
+      await axios.put(`https://art-gallery-kmgs.onrender.com/api/admin/artist/approve/${artistId}`);
       setArtists(
         artists.map((artist) =>
           artist._id === artistId ? { ...artist, isApproved: true } : artist
@@ -65,8 +65,8 @@ useEffect(() => {
   // Disapprove artist and refetch updated data
   const disapproveArtist = async (artistId) => {
     try {
-      await axios.put(`http://localhost:5000/api/admin/artist/disapprove/${artistId}`);
-      const response = await axios.get('http://localhost:5000/api/admin/users');
+      await axios.put(`https://art-gallery-kmgs.onrender.com/api/admin/artist/disapprove/${artistId}`);
+      const response = await axios.get('https://art-gallery-kmgs.onrender.com/api/admin/users');
       setArtists(response.data.artists);
     } catch (error) {
       console.error('Error disapproving artist', error);
@@ -76,7 +76,7 @@ useEffect(() => {
   // Block user
   const blockUser = async (userId) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/admin/user/block/${userId}`);
+      const response = await axios.put(`https://art-gallery-kmgs.onrender.com/api/admin/user/block/${userId}`);
       setUsers(users.map(user => user._id === userId ? { ...user, isBlock: true } : user));
       console.log(response.data.message);
     } catch (error) {
@@ -87,7 +87,7 @@ useEffect(() => {
   // Unblock user
   const unblockUser = async (userId) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/admin/user/unblock/${userId}`);
+      const response = await axios.put(`https://art-gallery-kmgs.onrender.com/api/admin/user/unblock/${userId}`);
       setUsers(users.map(user => user._id === userId ? { ...user, isBlock: false } : user));
       console.log(response.data.message);
     } catch (error) {
@@ -223,7 +223,7 @@ useEffect(() => {
 // Toggle artwork visibility on the home page
 const toggleArtworkVisibility = async (artworkId) => {
   try {
-    const response = await axios.put(`http://localhost:5000/api/admin/artworks/togglehomepage/${artworkId}`);
+    const response = await axios.put(`https://art-gallery-kmgs.onrender.com/api/admin/artworks/togglehomepage/${artworkId}`);
     setArtworks(
       artworks.map((artwork) =>
         artwork._id === artworkId ? { ...artwork, show: !artwork.show } : artwork

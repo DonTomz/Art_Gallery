@@ -17,16 +17,16 @@ function ProfilePage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/users/get/${userId}`);
+        const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/users/get/${userId}`);
         const data = response.data;
         setUsername(data.username);
         setEmail(data.email);
         setPhoneNumber(data.phoneNumber);
         setRole(data.role);
-        setProfilePicPreview(data.profilePic ? `http://localhost:5000/uploads/${data.profilePic}` : null);
+        setProfilePicPreview(data.profilePic ? `https://art-gallery-kmgs.onrender.com/uploads/${data.profilePic}` : null);
         if (data.role === 'artist') {
           setArtistDescription(data.artistDescription || '');
-          setCurrentArtistDocument(data.artistDocument ? `http://localhost:5000/uploads/${data.artistDocument}` : '');
+          setCurrentArtistDocument(data.artistDocument ? `https://art-gallery-kmgs.onrender.com/uploads/${data.artistDocument}` : '');
         }
       } catch (error) {
         console.error('Error fetching user data', error);
@@ -49,7 +49,7 @@ function ProfilePage() {
     }
 
     try {
-      await axios.put(`http://localhost:5000/api/users/${userId}`, formData, {
+      await axios.put(`https://art-gallery-kmgs.onrender.com/api/users/${userId}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       alert('Profile updated successfully');

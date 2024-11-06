@@ -13,7 +13,7 @@ function Home() {
   useEffect(() => {
     const fetchArtworks = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/artworks');
+        const response = await fetch('https://art-gallery-kmgs.onrender.com/api/artworks');
         if (!response.ok) {
           throw new Error('Failed to fetch artworks');
         }
@@ -71,7 +71,7 @@ return (
             onClick={() => handleArtworkClick(artwork._id)}
           >
             <img
-              src={`http://localhost:5000/uploads/${artwork.imageUrl}`}
+              src={`https://art-gallery-kmgs.onrender.com/uploads/${artwork.imageUrl}`}
               alt={artwork.title}
               className="w-full h-40 object-cover rounded-t-lg"
             />

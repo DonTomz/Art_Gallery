@@ -20,7 +20,7 @@ const EditArtwork = () => {
     // Fetch artwork details to pre-fill the form
     const fetchArtwork = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/artworks/${id}`);
+        const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/artworks/${id}`);
         setArtwork(response.data);
       } catch (err) {
         setError('Error fetching artwork');
@@ -36,7 +36,7 @@ const EditArtwork = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5000/api/artworks/edit/${id}`, artwork);
+      await axios.put(`https://art-gallery-kmgs.onrender.com/api/artworks/edit/${id}`, artwork);
       navigate('/artist/artworks'); // Redirect to artist dashboard after successful edit
     } catch (err) {
       setError('Error updating artwork');

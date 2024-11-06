@@ -13,7 +13,7 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
   useEffect(() => {
     const fetchArtwork = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/artworks/artwork/${id}`);
+        const response = await fetch(`https://art-gallery-kmgs.onrender.com/api/artworks/artwork/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch artwork details');
         }
@@ -45,7 +45,7 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
   //   }
   
   //   try {
-  //     const response = await fetch('http://localhost:5000/api/artworks/cart/add', {
+  //     const response = await fetch('https://art-gallery-kmgs.onrender.com/api/artworks/cart/add', {
   //       method: 'POST',
   //       headers: { 'Content-Type': 'application/json' },
   //       body: JSON.stringify({ userId, artworkId: artwork._id, quantity }) 
@@ -76,7 +76,7 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
   }
 
   try {
-    const response = await fetch('http://localhost:5000/api/artworks/cart/add', {
+    const response = await fetch('https://art-gallery-kmgs.onrender.com/api/artworks/cart/add', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, artworkId: artwork._id, quantity }) // Include the quantity in the request
@@ -105,7 +105,7 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
   const handleAddToWishlist = async (artworkId) => {
     try {
       const userId = localStorage.getItem('userId');
-      const response = await axios.post('http://localhost:5000/api/artworks/wishlist/add', {
+      const response = await axios.post('https://art-gallery-kmgs.onrender.com/api/artworks/wishlist/add', {
         userId: userId,
         artworkId: artworkId,
       });
@@ -137,7 +137,7 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
         <div className="lg:w-1/2 relative">
   <div className="relative overflow-hidden rounded-lg h-[400px] lg:h-[500px] group"> {/* Group for hover effect */}
     <img
-      src={`http://localhost:5000/uploads/${artwork.imageUrl}`}
+      src={`https://art-gallery-kmgs.onrender.com/uploads/${artwork.imageUrl}`}
       alt={artwork.title}
       className="w-full h-full object-cover transform transition-transform duration-400 group-hover:scale-110" 
       // Scale effect on hover
