@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import logo from 'E:/Projects/Art_Gallery/frontend/src/images/header-logo-transparent-png.png'
 
 // Custom hook to determine if the screen width is less than a specific value
 const useMediaQuery = (query) => {
@@ -93,7 +94,12 @@ const Header = ({ openModal, openRegisterModal }) => {
   return (
     <header className="flex flex-col md:flex-row justify-between items-center py-3 px-5 bg-white border-b border-gray-300">
       <div className="text-2xl font-bold text-black mb-3 md:mb-0">
-        <span>ART </span> <span className='block'>GALLERY</span>
+        <img 
+          src={logo} 
+          alt="Art Gallery" 
+          className="header-logo" 
+          style={{ width: '200px', height: 'auto' }}
+        />
       </div>
       <nav className="flex flex-wrap md:flex-nowrap space-x-4 md:space-x-6 mb-3 md:mb-0">
         {role !== 'admin' && renderNavLinks()}

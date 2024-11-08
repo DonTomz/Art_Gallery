@@ -7,8 +7,8 @@ function AdminPage() {
   const [users, setUsers] = useState([]);
   const [artists, setArtists] = useState([]);
   const [artworks, setArtworks] = useState([]);
-  const [activeSection, setActiveSection] = useState('users'); // 'users', 'artists', 'artworks'
-  const [artistSubSection, setArtistSubSection] = useState('all'); // 'all', 'approved'
+  const [activeSection, setActiveSection] = useState('users'); 
+  const [artistSubSection, setArtistSubSection] = useState('all'); 
   const navigate = useNavigate();
 
 // Check if the user is an admin and redirect if not
