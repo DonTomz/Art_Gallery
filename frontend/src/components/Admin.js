@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Footer from './Footer';
+// import Footer from './Footer';
 
 function AdminPage() {
   const [users, setUsers] = useState([]);
@@ -223,7 +223,7 @@ useEffect(() => {
 // Toggle artwork visibility on the home page
 const toggleArtworkVisibility = async (artworkId) => {
   try {
-    const response = await axios.put(`https://art-gallery-kmgs.onrender.com/api/admin/artworks/togglehomepage/${artworkId}`);
+    await axios.put(`https://art-gallery-kmgs.onrender.com/api/admin/artworks/togglehomepage/${artworkId}`);
     setArtworks(
       artworks.map((artwork) =>
         artwork._id === artworkId ? { ...artwork, show: !artwork.show } : artwork

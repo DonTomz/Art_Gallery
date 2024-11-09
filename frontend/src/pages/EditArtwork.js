@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import useAuth from '../useAuth';
 
 const EditArtwork = () => {
+  useAuth();
   const { id } = useParams(); // Get the artwork ID from the URL
   const navigate = useNavigate();
 
@@ -15,6 +17,16 @@ const EditArtwork = () => {
   });
 
   const [error, setError] = useState('');
+
+  const userId = localStorage.getItem('userId');
+  const role = localStorage.getItem('role')
+
+
+  useEffect(() => {
+    if (!userId || role !== 'artist') {
+      navigate('/'); // Redirect to login if not logged in
+    }
+  }, [userId, role, navigate]);
 
   useEffect(() => {
     // Fetch artwork details to pre-fill the form

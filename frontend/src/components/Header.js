@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from 'E:/Projects/Art_Gallery/frontend/src/images/header-logo-transparent-png.png'
+import logo from 'E:/Projects/Art_Gallery/frontend/src/images/header-logo-transparent-png.png';
+import axios from 'axios'; // Import axios for API calls
 
 // Custom hook to determine if the screen width is less than a specific value
 const useMediaQuery = (query) => {
@@ -23,6 +24,7 @@ const Header = ({ openModal, openRegisterModal }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const navigate = useNavigate();
   const [role, setRole] = useState(null);
+  const [cartItemCount, setCartItemCount] = useState(0); // State for cart item count
   const dropdownRef = useRef(null);
 
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -30,11 +32,27 @@ const Header = ({ openModal, openRegisterModal }) => {
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
     const storedRole = localStorage.getItem('role');
+    const userId = localStorage.getItem('userId'); // Get userId from local storage
+
     if (storedUsername) {
       setUsername(storedUsername);
     }
     if (storedRole) {
       setRole(storedRole);
+    }
+
+    // Fetch cart items count if user is logged in
+    if (userId) {
+      const fetchCartCount = async () => {
+        try {
+          const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/artworks/cart/count/${userId}`);
+          setCartItemCount(response.data.count); // Assuming the API returns { count: number }
+        } catch (error) {
+          console.error('Error fetching cart count:', error);
+        }
+      };
+
+      fetchCartCount();
     }
 
     // Add click event listener to close dropdown when clicking outside
@@ -61,6 +79,7 @@ const Header = ({ openModal, openRegisterModal }) => {
     localStorage.clear();
     setUsername(null);
     setRole(null);
+    setCartItemCount(0); // Reset cart item count on logout
     navigate('/');
     setTimeout(() => {
       window.location.reload();
@@ -186,7 +205,12 @@ const Header = ({ openModal, openRegisterModal }) => {
               <i className="fas fa-heart"></i>
             </Link>
             <Link to="/cart" className="relative text-black text-xl hover:text-gray-600">
-              <i id = "cart" className="fas fa-shopping-cart"></i>
+              <i id="cart" className="fas fa-shopping-cart"></i>
+              {cartItemCount > 0 && (
+                <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">
+                  {cartItemCount}
+                </span>
+              )}
             </Link>
           </div>
         )}

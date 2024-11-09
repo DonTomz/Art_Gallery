@@ -168,7 +168,7 @@ function AddArtwork() {
               required
             >
               <option value="">Select a category</option>
-              <option value="Paintings">Painting</option>
+              <option value="Painting">Painting</option>
               <option value="Photography">Photography</option>
               <option value="Sculpture">Sculpture</option>
               <option value="Drawings">Drawing</option>

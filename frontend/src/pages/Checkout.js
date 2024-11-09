@@ -75,8 +75,6 @@ function CheckoutPage() {
 
 
 
-
-
   const handlePayment = async () => {
     const totalAmount = calculateTotalAmount();
     const isScriptLoaded = await loadRazorpayScript();
@@ -100,7 +98,7 @@ function CheckoutPage() {
           artworkId: item.artworkId._id,
           artworkName: item.artworkId.title,
           quantity: item.quantity,
-          price: item.artworkId.price
+          price: item.artworkId.price 
         })),
         totalPrice: totalAmount
       });
