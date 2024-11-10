@@ -118,7 +118,7 @@ function CartPage() {
               >
                 <div className="flex items-center gap-4">
                   <img
-                    src={`https://art-gallery-kmgs.onrender.com/api/uploads/${item.artworkId.imageUrl}`}
+                    src={`https://art-gallery-kmgs.onrender.com/uploads/${item.artworkId.imageUrl}`}
                     alt={item.artworkId.title}
                     className="w-20 h-20 object-contain rounded-lg"
                   />

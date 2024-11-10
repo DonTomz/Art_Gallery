@@ -34,7 +34,7 @@ const ArtistArtworks = () => {
           {artworks.map((artwork) => (
             <div key={artwork._id} className="artwork-card bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
               <img
-                src={`https://art-gallery-kmgs.onrender.com/api/uploads/${artwork.imageUrl}`}
+                src={`https://art-gallery-kmgs.onrender.com/uploads/${artwork.imageUrl}`}
                 alt={artwork.title}
                 className="w-full h-64 object-cover"
               />

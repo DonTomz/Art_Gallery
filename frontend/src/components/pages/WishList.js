@@ -73,7 +73,7 @@ function WishlistPage() {
               {/* Artwork Image */}
               <div className="overflow-hidden rounded-lg mb-4">
                 <img 
-                  src={`https://art-gallery-kmgs.onrender.com/api/uploads/${artwork.imageUrl}`} 
+                  src={`https://art-gallery-kmgs.onrender.com/uploads/${artwork.imageUrl}`} 
                   alt={artwork.title} 
                   className="w-full h-56 object-cover transition-transform duration-300 ease-in-out hover:scale-105 rounded-md"
                 />

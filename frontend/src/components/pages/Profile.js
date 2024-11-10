@@ -28,10 +28,10 @@ function ProfilePage() {
         setEmail(data.email);
         setPhoneNumber(data.phoneNumber);
         setRole(data.role);
-        setProfilePicPreview(data.profilePic ? `https://art-gallery-kmgs.onrender.com/api/uploads/${data.profilePic}` : null);
+        setProfilePicPreview(data.profilePic ? `https://art-gallery-kmgs.onrender.com/uploads/${data.profilePic}` : null);
         if (data.role === 'artist') {
           setArtistDescription(data.artistDescription || '');
-          setCurrentArtistDocument(data.artistDocument ? `https://art-gallery-kmgs.onrender.com/api/uploads/${data.artistDocument}` : '');
+          setCurrentArtistDocument(data.artistDocument ? `https://art-gallery-kmgs.onrender.com/uploads/${data.artistDocument}` : '');
         }
       } catch (error) {
         console.error('Error fetching user data', error);

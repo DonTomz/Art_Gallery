@@ -107,7 +107,7 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
         <div className="lg:w-1/2 relative">
   <div className="relative overflow-hidden rounded-lg h-[400px] lg:h-[500px] group"> {/* Group for hover effect */}
     <img
-      src={`https://art-gallery-kmgs.onrender.com/api/uploads/${artwork.imageUrl}`}
+      src={`https://art-gallery-kmgs.onrender.com/uploads/${artwork.imageUrl}`}
       alt={artwork.title}
       className="w-full h-full object-cover transform transition-transform duration-400 group-hover:scale-110" 
       // Scale effect on hover
