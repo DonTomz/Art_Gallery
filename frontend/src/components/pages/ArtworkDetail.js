@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { FaHeart } from 'react-icons/fa'; 
 import axios from 'axios';
 
+
 function ArtworkDetail({ openModal }) { // Accept openModal as a prop
   const { id } = useParams(); 
   const [artwork, setArtwork] = useState(null);
@@ -31,37 +32,6 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
 
 
 
-  // const handleAddToCart = async (artwork) => {
-  //   const userId = localStorage.getItem('userId'); 
-  
-  //   if (!userId) {
-  //     openModal(); 
-  //     return;
-  //   }
-
-  //   if (quantity > artwork.stock) {
-  //     alert('Cannot add more items than available in stock.');
-  //     return;
-  //   }
-  
-  //   try {
-  //     const response = await fetch('https://art-gallery-kmgs.onrender.com/api/artworks/cart/add', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ userId, artworkId: artwork._id, quantity }) 
-  //     });
-  
-  //     if (response.ok) {
-  //       const cart = await response.json();
-  //       console.log('Cart updated:', cart);
-  //       alert('Artwork added to cart');
-  //     } else {
-  //       alert('Failed to add to cart');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //   }
-  // };
   const handleAddToCart = async (artwork) => {
   const userId = localStorage.getItem('userId'); // Assuming you store the logged-in user ID in localStorage
 
@@ -137,7 +107,7 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
         <div className="lg:w-1/2 relative">
   <div className="relative overflow-hidden rounded-lg h-[400px] lg:h-[500px] group"> {/* Group for hover effect */}
     <img
-      src={`https://art-gallery-kmgs.onrender.com/uploads/${artwork.imageUrl}`}
+      src={`https://art-gallery-kmgs.onrender.com/api/uploads/${artwork.imageUrl}`}
       alt={artwork.title}
       className="w-full h-full object-cover transform transition-transform duration-400 group-hover:scale-110" 
       // Scale effect on hover

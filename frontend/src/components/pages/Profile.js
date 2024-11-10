@@ -13,6 +13,9 @@ function ProfilePage() {
   const [artistDescription, setArtistDescription] = useState('');
   const [artistDocument, setArtistDocument] = useState(null);
   const [currentArtistDocument, setCurrentArtistDocument] = useState('');
+  const [phoneNumberError, setPhoneNumberError] = useState('');
+  const [profilePicError, setProfilePicError] = useState('');
+  const [artistDocumentError, setArtistDocumentError] = useState('');
 
   const userId = localStorage.getItem('userId');
 
@@ -25,10 +28,10 @@ function ProfilePage() {
         setEmail(data.email);
         setPhoneNumber(data.phoneNumber);
         setRole(data.role);
-        setProfilePicPreview(data.profilePic ? `https://art-gallery-kmgs.onrender.com/uploads/${data.profilePic}` : null);
+        setProfilePicPreview(data.profilePic ? `https://art-gallery-kmgs.onrender.com/api/uploads/${data.profilePic}` : null);
         if (data.role === 'artist') {
           setArtistDescription(data.artistDescription || '');
-          setCurrentArtistDocument(data.artistDocument ? `https://art-gallery-kmgs.onrender.com/uploads/${data.artistDocument}` : '');
+          setCurrentArtistDocument(data.artistDocument ? `https://art-gallery-kmgs.onrender.com/api/uploads/${data.artistDocument}` : '');
         }
       } catch (error) {
         console.error('Error fetching user data', error);
@@ -40,6 +43,28 @@ function ProfilePage() {
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
+    
+    if (phoneNumber && !/^\d{0,10}$/.test(phoneNumber)) {
+      setPhoneNumberError('Phone number must be up to 10 digits.');
+      return;
+    } else {
+      setPhoneNumberError('');
+    }
+
+    if (profilePic && !/\.(jpg|jpeg|png)$/i.test(profilePic.name)) {
+      setProfilePicError('Profile picture must be a JPG, JPEG, or PNG file.');
+      return;
+    } else {
+      setProfilePicError('');
+    }
+
+    if (artistDocument && !/\.pdf$/i.test(artistDocument.name)) {
+      setArtistDocumentError('Documentation must be a PDF file.');
+      return;
+    } else {
+      setArtistDocumentError('');
+    }
+
     const formData = new FormData();
     formData.append('username', username);
     formData.append('email', email);
@@ -65,6 +90,21 @@ function ProfilePage() {
     const file = e.target.files[0];
     setProfilePic(file);
     setProfilePicPreview(URL.createObjectURL(file));
+    if (file && !/\.(jpg|jpeg|png)$/i.test(file.name)) {
+      setProfilePicError('Profile picture must be a JPG, JPEG, or PNG file.');
+    } else {
+      setProfilePicError('');
+    }
+  };
+
+  const handlePhoneNumberChange = (e) => {
+    const value = e.target.value;
+    setPhoneNumber(value);
+    if (value && !/^\d{0,10}$/.test(value)) {
+      setPhoneNumberError('Phone number must be up to 10 digits.');
+    } else {
+      setPhoneNumberError('');
+    }
   };
 
   return (
@@ -89,6 +129,7 @@ function ProfilePage() {
                 accept="image/*"
                 className="text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
+              {profilePicError && <p className="text-red-500 text-sm">{profilePicError}</p>}
             </div>
           </div>
 
@@ -120,9 +161,10 @@ function ProfilePage() {
             <input
               type="text"
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              onChange={handlePhoneNumberChange}
               className="w-full border border-gray-300 p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500"
             />
+            {phoneNumberError && <p className="text-red-500 text-sm">{phoneNumberError}</p>}
           </div>
         </div>
 
@@ -154,10 +196,19 @@ function ProfilePage() {
               )}
               <input
                 type="file"
-                onChange={(e) => setArtistDocument(e.target.files[0])}
+                onChange={(e) => {
+                  setArtistDocument(e.target.files[0]);
+                  const file = e.target.files[0];
+                  if (file && !/\.pdf$/.test(file.name)) {
+                    setArtistDocumentError('Documentation must be a PDF file.');
+                  } else {
+                    setArtistDocumentError('');
+                  }
+                }}
                 accept="application/pdf"
                 className="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
+              {artistDocumentError && <p className="text-red-500 text-sm">{artistDocumentError}</p>}
             </div>
           </div>
         )}

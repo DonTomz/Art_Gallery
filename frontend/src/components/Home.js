@@ -71,7 +71,7 @@ return (
             onClick={() => handleArtworkClick(artwork._id)}
           >
             <img
-              src={`https://art-gallery-kmgs.onrender.com/uploads/${artwork.imageUrl}`}
+              src={`https://art-gallery-kmgs.onrender.com/api/uploads/${artwork.imageUrl}`}
               alt={artwork.title}
               className="w-full h-40 object-cover rounded-t-lg"
             />

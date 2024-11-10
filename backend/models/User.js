@@ -26,37 +26,40 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'artist', 'admin'], // Define the roles
+    enum: ['user', 'artist', 'admin'],
     required: true,
   },
+  phoneNumber: {
+    type: String,
+    required: false,
+  },
   resetPasswordToken: {
-     type: String 
-  },  // For password reset
-  resetPasswordExpires: 
-  {
-     type: Date 
-  } ,
+    type: String,
+  },
+  resetPasswordExpires: {
+    type: Date,
+  },
   isApproved: {
     type: Boolean,
-    default: false 
+    default: false,
   },
   isBlock: {
     type: Boolean,
-    default: false
+    default: false,
   },
-  profilePic: { 
-    type: String 
-  }, 
-  artistDescription: { 
-    type: String 
-  }, 
-  artistDocument: { 
-    type: String 
-  }, 
+  profilePic: {
+    type: String,
+  },
+  artistDescription: {
+    type: String,
+  },
+  artistDocument: {
+    type: String,
+  },
   wishlist: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Artwork', // Referencing the Artwork model
+      ref: 'Artwork',
     },
   ],
   addresses: [{
@@ -67,7 +70,7 @@ const userSchema = new mongoose.Schema({
     country: String,
     state: String,
     district: String,
-    pincode: String
+    pincode: String,
   }]
 }, { timestamps: true });
 

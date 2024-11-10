@@ -323,6 +323,32 @@ router.delete('/cart/remove', async (req, res) => {
   }
 });
 
+// Route to get the count of items in the user's cart
+router.get('/cart/count/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    // Find the cart for the user
+    const cart = await Cartdata.findOne({ userId });
+    if (!cart) {
+      return res.status(404).json({ count: 0 }); // No cart found, return count as 0
+    }
+
+    // Calculate the total count of items in the cart
+    const totalCount = cart.items.length;
+    
+    res.status(200).json({ count: totalCount });
+  } catch (error) {
+    console.error('Error fetching cart count:', error);
+    res.status(500).json({ message: 'Error fetching cart count' });
+  }
+});
+
+
+
+
+
+
 
 // POST: Add to wishlist
 router.post('/wishlist/add', async (req, res) => {
@@ -351,6 +377,8 @@ router.post('/wishlist/add', async (req, res) => {
   }
 });
 
+
+
 // GET: Fetch wishlist for a user
 router.get('/wishlist/:userId', async (req, res) => {
   const { userId } = req.params;
@@ -371,6 +399,8 @@ router.get('/wishlist/:userId', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+
 
 // POST: Remove artwork from wishlist
 router.post('/wishlist/remove', async (req, res) => {
@@ -400,6 +430,8 @@ router.post('/wishlist/remove', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+
 
 // Endpoint to clear the cart for a user
 router.delete('/cart/clear/:userId', async (req, res) => {

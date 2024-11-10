@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import useAuth from '../useAuth';
+import useAdminAuth from '../useAdminAuth';;
 
 const Category = () => {
-  useAuth();
+  useAdminAuth();
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -49,7 +49,7 @@ const Category = () => {
                 onClick={() => handleArtworkClick(artwork._id)}
               >
                 <img
-                  src={`https://art-gallery-kmgs.onrender.com/uploads/${artwork.imageUrl}`}
+                  src={`https://art-gallery-kmgs.onrender.com/api/uploads/${artwork.imageUrl}`}
                   alt={artwork.title}
                   className="w-full h-48 object-cover"
                 />

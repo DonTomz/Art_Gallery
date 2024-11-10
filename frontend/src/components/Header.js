@@ -117,7 +117,7 @@ const Header = ({ openModal, openRegisterModal }) => {
           src={logo} 
           alt="Art Gallery" 
           className="header-logo" 
-          style={{ width: '200px', height: 'auto' }}
+          style={{ width: '150px', height: 'auto' }}
         />
       </div>
       <nav className="flex flex-wrap md:flex-nowrap space-x-4 md:space-x-6 mb-3 md:mb-0">
@@ -207,7 +207,7 @@ const Header = ({ openModal, openRegisterModal }) => {
             <Link to="/cart" className="relative text-black text-xl hover:text-gray-600">
               <i id="cart" className="fas fa-shopping-cart"></i>
               {cartItemCount > 0 && (
-                <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">
+                <span className="absolute top-0 right-0  text-white text-xs rounded-full px-1.5">
                   {cartItemCount}
                 </span>
               )}
