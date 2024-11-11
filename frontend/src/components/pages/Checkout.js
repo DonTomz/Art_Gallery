@@ -254,6 +254,16 @@ function CheckoutPage() {
 
 
   const handleSaveAddress = async () => {
+    // Validate phone number and pincode before saving
+    if (phoneNumber.length !== 10) {
+      alert('Phone number must be 10 digits long.');
+      return;
+    }
+    if (pincode.length !== 6) {
+      alert('Pincode must be 6 digits long.');
+      return;
+    }
+
     try {
       const addressData = {
         firstName,
@@ -406,7 +416,13 @@ function CheckoutPage() {
                   <input
                     type="tel"
                     value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow only digits and limit to 10 characters
+                      if (/^\d{0,10}$/.test(value)) {
+                        setPhoneNumber(value);
+                      }
+                    }}
                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
@@ -446,7 +462,13 @@ function CheckoutPage() {
                   <input
                     type="text"
                     value={pincode}
-                    onChange={(e) => setPincode(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow only digits and limit to 6 characters
+                      if (/^\d{0,6}$/.test(value)) {
+                        setPincode(value);
+                      }
+                    }}
                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
