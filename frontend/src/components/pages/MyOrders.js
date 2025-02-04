@@ -8,7 +8,7 @@ function MyOrdersPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/payment/orders/user/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/payment/orders/user/${userId}`);
         setOrders(response.data);
       } catch (error) {
         console.error('Error fetching orders:', error);

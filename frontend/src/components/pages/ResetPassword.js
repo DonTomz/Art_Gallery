@@ -20,7 +20,7 @@ const ResetPassword = () => {
 
         setLoading(true); 
         try {
-            const { data } = await axios.post(`https://art-gallery-kmgs.onrender.com/api/auth/resetpassword/${token}`, { password });
+            const { data } = await axios.post(`http://localhost:5000/api/auth/resetpassword/${token}`, { password });
             setMessage(data.message);
             setError('');
             setTimeout(() => {

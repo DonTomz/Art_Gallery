@@ -10,7 +10,7 @@ const Users = () => {
     // Function to fetch user data
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/auth/user/`+id);  // API call to fetch user data
+        const response = await axios.get(`http://localhost:5000/api/auth/user/`+id);  // API call to fetch user data
         setUsername(response.data.username);  // Set the username from the response
       } catch (error) {
         console.error('Error fetching user data', error);

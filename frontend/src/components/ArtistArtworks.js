@@ -11,7 +11,7 @@ const ArtistArtworks = () => {
     const artistId = localStorage.getItem('userId');
     const fetchArtworks = async () => {
       try {
-        const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/artworks/mine/${artistId}`);
+        const response = await axios.get(`http://localhost:5000/api/artworks/mine/${artistId}`);
         setArtworks(response.data.artworks);
       } catch (err) {
         setError('Error fetching artworks');
@@ -34,7 +34,7 @@ const ArtistArtworks = () => {
           {artworks.map((artwork) => (
             <div key={artwork._id} className="artwork-card bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
               <img
-                src={`https://art-gallery-kmgs.onrender.com/uploads/${artwork.imageUrl}`}
+                src={`${artwork.imageUrl}`}
                 alt={artwork.title}
                 className="w-full h-64 object-cover"
               />

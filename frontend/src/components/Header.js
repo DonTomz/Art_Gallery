@@ -45,7 +45,7 @@ const Header = ({ openModal, openRegisterModal }) => {
     if (userId) {
       const fetchCartCount = async () => {
         try {
-          const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/artworks/cart/count/${userId}`);
+          const response = await axios.get(`http://localhost:5000/api/artworks/cart/count/${userId}`);
           setCartItemCount(response.data.count); // Assuming the API returns { count: number }
         } catch (error) {
           console.error('Error fetching cart count:', error);

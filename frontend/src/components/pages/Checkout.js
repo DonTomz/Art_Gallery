@@ -21,7 +21,7 @@ function CheckoutPage() {
 
   const fetchCartItems = useCallback(async () => {
     try {
-      const response = await fetch(`https://art-gallery-kmgs.onrender.com/api/artworks/cart/${userId}`);
+      const response = await fetch(`http://localhost:5000/api/artworks/cart/${userId}`);
       if (response.ok) {
         const cartData = await response.json();
         setCartItems(cartData.items || []);
@@ -36,7 +36,7 @@ function CheckoutPage() {
       // Fetch saved addresses
       const fetchSavedAddresses = useCallback(async () => {
         try {
-          const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/users/${userId}/addresses`);
+          const response = await axios.get(`http://localhost:5000/api/users/${userId}/addresses`);
           setSavedAddresses(response.data);
         } catch (error) {
           console.error('Error fetching saved addresses:', error);
@@ -85,10 +85,10 @@ function CheckoutPage() {
     }
 
     try {
-      const userGetEmail = await axios.get(`https://art-gallery-kmgs.onrender.com/api/users/get/${userId}`);
+      const userGetEmail = await axios.get(`http://localhost:5000/api/users/get/${userId}`);
       console.log(userGetEmail.data.email);
       // Create order in the database
-      const orderResponse = await axios.post('https://art-gallery-kmgs.onrender.com/api/payment/orders', {
+      const orderResponse = await axios.post('http://localhost:5000/api/payment/orders', {
         userId: localStorage.getItem('userId'),
         userEmail: userGetEmail.data.email,
         userName: `${firstName} ${lastName}`,
@@ -109,7 +109,7 @@ function CheckoutPage() {
 
       console.log('Creating Razorpay order...');
       // Create Razorpay order
-      const response = await fetch('https://art-gallery-kmgs.onrender.com/api/payment/create-order', {
+      const response = await fetch('http://localhost:5000/api/payment/create-order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ function CheckoutPage() {
           console.log(orderData.id)
           
           // Update order with payment details
-          const updatedOrder = await axios.patch(`https://art-gallery-kmgs.onrender.com/api/payment/orders/${orderId}`, {
+          const updatedOrder = await axios.patch(`http://localhost:5000/api/payment/orders/${orderId}`, {
             status: 'Paid',
             paymentId: response.razorpay_payment_id
           });
@@ -238,7 +238,7 @@ function CheckoutPage() {
 
   const handleDeleteAddress = async (addressId) => {
     try {
-      await axios.delete(`https://art-gallery-kmgs.onrender.com/api/users/${userId}/addresses/${addressId}`);
+      await axios.delete(`http://localhost:5000/api/users/${userId}/addresses/${addressId}`);
       setSavedAddresses(savedAddresses.filter(addr => addr._id !== addressId));
       if (selectedAddressId === addressId) {
         setSelectedAddressId(null);
@@ -279,14 +279,14 @@ function CheckoutPage() {
       let response;
       if (selectedAddressId) {
         // Update existing address
-        response = await axios.put(`https://art-gallery-kmgs.onrender.com/api/users/${userId}/addresses/${selectedAddressId}`, addressData);
+        response = await axios.put(`http://localhost:5000/api/users/${userId}/addresses/${selectedAddressId}`, addressData);
         const updatedAddresses = savedAddresses.map(addr => 
           addr._id === selectedAddressId ? response.data : addr
         );
         setSavedAddresses(updatedAddresses);
       } else {
         // Create new address
-        response = await axios.post(`https://art-gallery-kmgs.onrender.com/api/users/${userId}/addresses`, addressData);
+        response = await axios.post(`http://localhost:5000/api/users/${userId}/addresses`, addressData);
         setSavedAddresses([...savedAddresses, response.data]);
       }
 
@@ -303,7 +303,7 @@ function CheckoutPage() {
 
   const clearCart = async () => {
     try {
-      const response = await fetch(`https://art-gallery-kmgs.onrender.com/api/artworks/cart/clear/${userId}`, {
+      const response = await fetch(`http://localhost:5000/api/artworks/cart/clear/${userId}`, {
         method: 'DELETE',
       });
       if (response.ok) {

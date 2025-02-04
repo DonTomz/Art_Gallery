@@ -8,6 +8,7 @@ const artworkRoutes = require('./routes/artworks');
 const adminRoutes = require('./routes/admin');
 const usersRoutes =require('./routes/users');
 const paymentRoutes = require('./routes/payment')
+const uploadRoutes = require('./routes/upload')
 
 const path =require('path');
 const fs = require('fs');
@@ -41,6 +42,7 @@ app.use('/api/artworks', artworkRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/users', usersRoutes)
 app.use('/api/payment', paymentRoutes);
+app.use('/api/upload',uploadRoutes)
 
 
 // Test Route

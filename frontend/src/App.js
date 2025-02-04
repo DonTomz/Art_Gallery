@@ -23,6 +23,7 @@ import ArtistArtworks from './components/ArtistArtworks';
 import CheckoutPage from './components/pages/Checkout';
 import SuccessPage from './components/pages/Success';
 import MyOrdersPage from './components/pages/MyOrders';
+import WhatsAppChat from './components/WhatsAppChat';
 
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -71,9 +72,11 @@ function App() {
             <Route path='/checkout' element ={<CheckoutPage/>}/>
             <Route path="/success" element={<SuccessPage />} />
             <Route path="/myorders" element={<MyOrdersPage />} />
+            
           </Routes>
         </main>
         <Footer />
+        <WhatsAppChat/>
         <Login show={showLoginModal} handleClose={closeLoginModal} openRegisterModal={openRegisterModal} />
         <Register show={showRegisterModal} handleClose={closeRegisterModal} openLoginModal={openLoginModal} />
         

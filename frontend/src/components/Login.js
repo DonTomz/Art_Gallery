@@ -25,7 +25,7 @@ function Login({ show, handleClose, openRegisterModal }) {
     e.preventDefault();
     try {
       console.log("Sending request with data:", formData);
-      const response = await axios.post('https://art-gallery-kmgs.onrender.com/api/auth/login', {
+      const response = await axios.post('http://localhost:5000/api/auth/login', {
         email: formData.email,
         password: formData.password
       });
@@ -68,7 +68,7 @@ function Login({ show, handleClose, openRegisterModal }) {
 
   // const handleGoogleLoginSuccess = async (response) => {
   //   try {
-  //     const result = await axios.post('https://art-gallery-kmgs.onrender.com/api/auth/google-login', {
+  //     const result = await axios.post('http://localhost:5000/api/auth/google-login', {
   //       token: response.tokenId, // Send Google token to your backend
   //     });
   
@@ -86,7 +86,7 @@ function Login({ show, handleClose, openRegisterModal }) {
       const decoded = jwtDecode(credentialResponse?.credential);
       console.log("Google User Details: ", decoded);
   
-      const response = await axios.post('https://art-gallery-kmgs.onrender.com/api/auth/google-login', {
+      const response = await axios.post('http://localhost:5000/api/auth/google-login', {
         token: credentialResponse.credential
       });
   

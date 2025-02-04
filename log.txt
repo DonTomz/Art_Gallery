@@ -1,0 +1,307 @@
+commit 0d04183629568ab4e8803b13707b610174833132
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Mon Nov 11 07:43:09 2024 +0530
+
+    Save commit
+    
+    To save some modifications.
+
+commit 6bcf37607b92dfe9837b7dd5a1c88275ec01d5a3
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Sun Nov 10 12:08:57 2024 +0530
+
+    Image problem
+    
+    Resolved miss occurence of the images
+
+commit 1b9b1fb24097e770c4f32484a2cb84fe1e931378
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Sun Nov 10 11:14:40 2024 +0530
+
+    Modifications
+    
+    Modification on profile with some validations
+
+commit b555ca19374e669df89baed9f69e8549990f0320
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Sat Nov 9 09:55:29 2024 +0530
+
+    Aligning pages
+    
+    Setting up the pages
+
+commit 5d5c7519794404a544019812eacc3ba0b6210a24
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Fri Nov 8 21:01:26 2024 +0530
+
+    Logo
+    
+    Update on logo
+
+commit 061b6bdb9a255aeeeeedc345b595a05f489976bf
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Fri Nov 8 20:45:28 2024 +0530
+
+    Logo
+    
+    Inserted logo and changed name
+
+commit eb1db37d5c65683c6edd429a68da693dc8cb7d05
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Wed Nov 6 18:55:49 2024 +0530
+
+    Hosting
+    
+    Changing localhost
+
+commit db97d0afb402e0974f28d7b7da3df51d519ce9aa
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Wed Nov 6 18:46:21 2024 +0530
+
+    Hosting setup
+    
+    push build
+
+commit 3edf614d2d110c8eb1b461794aee99f9ec2fe5a5
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Wed Nov 6 17:32:20 2024 +0530
+
+    hosting
+    
+    removed ds store
+
+commit b418ef77ac5fc542f23cb8bd6f91152d4e7607ff
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Wed Nov 6 16:14:00 2024 +0530
+
+    Remove Node Modules
+
+commit 34a9dc0db4cf2e1950ebb07c1903f421721aeaee
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Wed Nov 6 16:04:42 2024 +0530
+
+    Update .gitignore
+    
+    render change
+
+commit 4ddf1c5c5409fcd3d930812f209b38fb55f8a777
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Wed Nov 6 14:54:48 2024 +0530
+
+    Hosting
+    
+    hosting update1
+
+commit 7ca6951ff2a2e81df741ca856f3e9376aa26c30b
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Wed Nov 6 11:36:52 2024 +0530
+
+    Hosting
+    
+    Modification for hosting
+
+commit f9cbd3c54f204c593720a4e4f28f815500c25ca1
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Wed Nov 6 11:34:18 2024 +0530
+
+    Hosting
+    
+    Setting up hosting
+
+commit 6556705ee4d9a17d5e134209a844c6515470a442
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Tue Nov 5 08:27:09 2024 +0530
+
+    Modification
+    
+    simple modifications for testing
+
+commit 291c58391f287ecdd4fcac527ff13cdf90af62b1
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Fri Nov 1 14:51:51 2024 +0530
+
+    Update package.json
+    
+    deploy part2
+
+commit 8aabc9a2550e9f6ee41095ce0a480f000b84b498
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Fri Nov 1 14:30:11 2024 +0530
+
+    Update auth.js
+    
+    hosting
+
+commit f4fa75b360a4c8c65c02a0014adac3fdd5a453b0
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Sun Oct 27 00:44:18 2024 +0530
+
+    Order Setup
+    
+    Included new order table and Order details after payment
+
+commit 9cb06a58a01835352c78c462391f12b14b67fa34
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Thu Oct 24 08:02:41 2024 +0530
+
+    Payment
+    
+    Added payment for  checkout
+
+commit 2f97c2ae627d939c9b42df026c9b8a32150da39c
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Tue Oct 22 17:30:23 2024 +0530
+
+    Admin modification
+    
+    Added artworks details in admin page
+
+commit 1572ccbd5a3243ff81d3693b64b9d2620091bec2
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Fri Oct 18 12:15:57 2024 +0530
+
+    Wishlist
+    
+    Modified wishlist
+
+commit 91f3fe7344e62bee9a438420cd634cf0fa09b189
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Mon Oct 14 12:10:53 2024 +0530
+
+    Creating  profile page
+    
+    Profile page for users and artists
+
+commit 48eb4c70b837fc51eb90440e10a42073f2782fd4
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Mon Oct 14 08:13:56 2024 +0530
+
+    Cart and search
+    
+    Included add to cart and search option
+
+commit 3f3a169f5d5fc0e20a17a280c416355dcbdeb4d5
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Wed Oct 9 23:31:16 2024 +0530
+
+    Validation env
+    
+    Validation for login
+
+commit ca7dfb2f343aa82e67d34ab879cda6934963330e
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Wed Oct 9 23:25:57 2024 +0530
+
+    Admin Page
+    
+    Modification of admin page
+
+commit 6ca363b4c1a830819ac9367a4d8365735c75391f
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Mon Oct 7 23:53:00 2024 +0530
+
+    Forgot password
+    
+    Included forgot password setup in the login.
+
+commit fd0456cb7c65d4305fbc22e3932a0ae3b952d8ac
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Mon Oct 7 20:46:15 2024 +0530
+
+    Frontend modification
+    
+    Modified user, artist and admin landing pages
+
+commit 84d9fb490940a4c4179ec6a65db92c8620e9eefc
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Fri Oct 4 08:08:35 2024 +0530
+
+    Images
+    
+    Solved image upload error
+
+commit aab152f94f9c4a1287dab67503c6d7ba79974e86
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Thu Oct 3 00:21:07 2024 +0530
+
+    Frontend design
+    
+    Modified frontend and corrected signup error
+
+commit 6c9c9da04322682401bbc9923a5a4eca92f6933e
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Wed Oct 2 00:36:59 2024 +0530
+
+    Username
+    
+    Additon of username after login
+
+commit e3ff59093270aed411f4ec214f767d7ce2981c7b
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Tue Oct 1 08:10:35 2024 +0530
+
+    Artwork
+    
+    Adding artwork into the page
+
+commit 3e265240d0b8f35392a030f2b08e7e50d2d3642c
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Wed Sep 25 06:15:48 2024 +0530
+
+    Validation
+    
+    Live validations on registration
+
+commit 95c8e4efb438b7d35e9b14330af8b9f458667095
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Tue Sep 24 22:17:58 2024 +0530
+
+    User page
+    
+    Added user page after login
+
+commit 3740c38844d6ccf35a7c1c26ecc612dc45895f8e
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Tue Sep 24 11:08:15 2024 +0530
+
+    Login and Registration database
+    
+    Successful login and registration with a popup.
+
+commit 96934cef31cc5da4df6a08e3ae048dc91e595c5e
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Mon Sep 23 06:18:10 2024 +0530
+
+    Database
+    
+    Mongodb atlas database connected
+
+commit a59be7d26a7092bd74fe3cec8c2495f186c9b9e9
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Sat Sep 21 09:51:26 2024 +0530
+
+    Register page
+    
+    Design modified register page
+
+commit f05f5df8665ee3f35a53cc74c15f95cbe16bc595
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Sat Sep 21 09:03:21 2024 +0530
+
+    Login and registration
+    
+    Included login and registration design
+
+commit 0840ee9775b5409595705df786d950936fa267b4
+Author: DonTomz <dontomy248@gmail.com>
+Date:   Thu Sep 19 14:28:10 2024 +0530
+
+    frontend
+    
+    creating frontend using npx create-react-app
+
+commit d7d4ccfeac85c34042c3f5e52e8dd564a47db4f1
+Author: DonTomz <150460020+DonTomz@users.noreply.github.com>
+Date:   Wed Aug 7 14:52:50 2024 +0530
+
+    Add files via upload

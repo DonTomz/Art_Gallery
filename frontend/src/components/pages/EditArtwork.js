@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import useAuth from '../useAuth';
+import axios from 'axios';
 
 const EditArtwork = () => {
-  useAuth();
-  const { id } = useParams(); // Get the artwork ID from the URL
+  const { id } = useParams();
   const navigate = useNavigate();
-
   const [artwork, setArtwork] = useState({
     title: '',
     description: '',
@@ -15,24 +12,22 @@ const EditArtwork = () => {
     stock: '',
     category: '',
   });
-
+  const [imageFiles, setImageFiles] = useState([]);
   const [error, setError] = useState('');
-
   const userId = localStorage.getItem('userId');
-  const role = localStorage.getItem('role')
-
+  const role = localStorage.getItem('role');
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (!userId || role !== 'artist') {
-      navigate('/'); // Redirect to login if not logged in
+      navigate('/');
     }
   }, [userId, role, navigate]);
 
   useEffect(() => {
-    // Fetch artwork details to pre-fill the form
     const fetchArtwork = async () => {
       try {
-        const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/artworks/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/artworks/${id}`);
         setArtwork(response.data);
       } catch (err) {
         setError('Error fetching artwork');
@@ -45,11 +40,33 @@ const EditArtwork = () => {
     setArtwork({ ...artwork, [e.target.name]: e.target.value });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFiles((prevFiles) => [...prevFiles, file]);
+    }
+  };
+
+  const handleRemoveImage = (index) => {
+    setImageFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append('title', artwork.title);
+    formData.append('description', artwork.description);
+    formData.append('price', artwork.price);
+    formData.append('stock', artwork.stock);
+    formData.append('category', artwork.category);
+
+    imageFiles.forEach((file) => {
+      formData.append('images', file);
+    });
+
     try {
-      await axios.put(`https://art-gallery-kmgs.onrender.com/api/artworks/edit/${id}`, artwork);
-      navigate('/artist/artworks'); // Redirect to artist dashboard after successful edit
+      await axios.put(`http://localhost:5000/api/artworks/edit/${id}`, formData);
+      navigate('/artist/artworks');
     } catch (err) {
       setError('Error updating artwork');
     }
@@ -71,7 +88,6 @@ const EditArtwork = () => {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             />
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700">Description</label>
             <textarea
@@ -82,7 +98,6 @@ const EditArtwork = () => {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             />
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700">Price</label>
             <input
@@ -93,7 +108,6 @@ const EditArtwork = () => {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             />
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700">Stock</label>
             <input
@@ -104,18 +118,56 @@ const EditArtwork = () => {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             />
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700">Category</label>
+            <label className="block text-sm font-medium text-gray-700">Upload Images</label>
             <input
-              type="text"
-              name="category"
-              value={artwork.category}
-              onChange={handleChange}
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              onChange={handleImageChange}
+              multiple
             />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current.click()}
+              className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Add Another Image
+            </button>
+            <div className="mt-2">
+              {imageFiles.length > 0 && (
+                <ul>
+                  {imageFiles.map((file, index) => (
+                    <li key={index} className="flex justify-between items-center">
+                      <span>{file.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="text-red-500"
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="mt-4">
+              {imageFiles.length > 0 && (
+                <div className="grid grid-cols-2 gap-4">
+                  {imageFiles.map((file, index) => (
+                    <img
+                      key={index}
+                      src={URL.createObjectURL(file)}
+                      alt={`Preview ${index}`}
+                      className="w-full h-auto rounded-md"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-
           <div className="flex justify-end">
             <button
               type="submit"

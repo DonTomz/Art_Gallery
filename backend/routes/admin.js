@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/User');
 const Artwork = require('../models/Artwork')
+const Category = require('../models/Category')
 
 const router = express.Router();
 
@@ -111,5 +112,37 @@ router.put('/artworks/togglehomepage/:id', async (req, res) => {
   }
 });
 
+// Get all categories
+router.get('/categories', async (req, res) => {
+  try {
+    const categories = await Category.find();
+    console.log(categories);  
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching categories', error });
+  }
+});
+
+// Add new category
+router.post('/category/add', async (req, res) => {
+  try {
+    const { name, description } = req.body;
+    const newCategory = new Category({ name, description });
+    await newCategory.save();
+    res.status(201).json(newCategory);
+  } catch (error) {
+    res.status(400).json({ message: 'Error adding category', error });
+  }
+});
+
+// Delete category
+router.delete('/category/:id', async (req, res) => {
+  try {
+    await Category.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Category deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting category', error });
+  }
+});
 
 module.exports = router;

@@ -4,53 +4,50 @@ const multer = require('multer');
 const path = require('path');
 const Cartdata = require('../models/Cartdata');
 const User = require('../models/User');
+const Category = require('../models/Category');
+const mongoose = require('mongoose');
+const upload = require('../config/multerStorage')
 
 const router = express.Router();
 
 // Set up multer for image uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname ,'../uploads/')); // Directory to save uploaded images
+    cb(null, path.join(__dirname, '../uploads/')); // Directory to save uploaded images
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname)); // Unique filename with original extension
   }
 });
 
-const upload = multer({ storage: storage });
+
 
 // Route to insert artwork with image upload
-router.post('/add', upload.single('image'), async (req, res) => {
+router.post("/add", upload.array("images", 5), async (req, res) => {
   try {
-    const { title, artist, description, price, category,stock, artistId } = req.body;
+    const { title, artist, description, price, category, stock, artistId } = req.body;
 
-    
-    // Get the image path if an image is uploaded
-    const imageUrl = req.file ? `${req.file.filename}` : '';
+    // Extract uploaded image URLs from Cloudinary
+    const imageUrls = req.files.map((file) => file.path);
 
-    // Create new artwork with the imageUrl
-    const artwork = new Artwork({
+    const newArtwork = new Artwork({
       title,
       artist,
       description,
       price,
       category,
-      imageUrl, 
       stock,
-      artistId
+      artistId,
+      imageUrl: imageUrls, // Store image URLs in the database
     });
 
-    // Save the artwork to the database
-    await artwork.save();
-
-    res.status(201).json({ message: 'Artwork added successfully!', artwork });
+    await newArtwork.save();
+    res.status(201).json({ message: "Artwork added successfully", artwork: newArtwork });
   } catch (error) {
-    console.error('Error adding artwork:', error);
-    res.status(500).json({ error: 'Failed to add artwork' });
+    console.error("Error adding artwork:", error);
+    res.status(500).json({ error: "Failed to add artwork" });
   }
 });
-
-
 
 // Route to fetch artworks where show is true
 router.get('/', async (req, res) => {
@@ -62,47 +59,50 @@ router.get('/', async (req, res) => {
   }
 });
 
-
 // Get artworks by category
 router.get('/category/:category', async (req, res) => {
   try {
-    const category = req.params.category;
-    const artworks = await Artwork.find({ category, show: true });
-    
+    const category = req.params.category; // This should be a string
+    const artworks = await Artwork.find({ category, show: true }); // Ensure category is treated as a string
+
     if (!artworks || artworks.length === 0) {
       return res.status(404).json({ message: 'No artworks found for this category' });
     }
 
     res.json(artworks);
   } catch (error) {
+    console.error('Error fetching artworks by category:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
-
-
-
-
+// Get artwork by ID
 router.get('/artwork/:id', async (req, res) => {
   const { id } = req.params;
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).json({ message: 'Invalid artwork ID format' });
+  }
+
   try {
     const artwork = await Artwork.findById(id);
+    if (!artwork) {
+      return res.status(404).json({ message: 'Artwork not found' });
+    }
     res.json(artwork);
   } catch (error) {
-    res.status(500).json({ message: 'Artwork not found' });
+    console.error('Error fetching artwork:', error);
+    res.status(500).json({ message: 'Error fetching artwork', error: error.message });
   }
 });
 
-
-
 // Route to get all artworks uploaded by the logged-in artist
-router.get('/mine/:id',  async (req, res) => {
+router.get('/mine/:id', async (req, res) => {
   const artistId = req.params.id;
-  try {
-     // Assuming `req.user` has the logged-in artist's ID
-    console.log(artistId)
+  if (!mongoose.isValidObjectId(artistId)) {
+    return res.status(400).json({ message: 'Invalid artist ID format' });
+  }
 
-    // Find artworks uploaded by the artist
+  try {
     const artworks = await Artwork.find({ artistId: artistId });
 
     if (artworks.length === 0) {
@@ -115,80 +115,52 @@ router.get('/mine/:id',  async (req, res) => {
   }
 });
 
-
-
-router.get('/:id', async (req, res) => {
-  try {
-    const artwork = await Artwork.findById(req.params.id);
-    
-    if (!artwork) {
-      return res.status(404).json({ message: 'Artwork not found' });
-    }
-    res.json(artwork);
-  } catch (error) {
-    console.error('Error fetching artwork:', error);
-    
-    // Handle invalid ID format
-    if (error.kind === 'ObjectId') {
-      return res.status(400).json({ message: 'Invalid artwork ID format' });
-    }
-
-    res.status(500).json({ message: 'Error fetching artwork', error: error.message });
+// Route to update artwork
+router.put('/edit/:id', upload.array('images', 10), async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).json({ message: 'Invalid artwork ID format' });
   }
-});
 
-module.exports = router;
-
-// Edit artwork route
-router.put('/edit/:id', upload.single('image'), async (req, res) => {
   try {
-    const { id } = req.params;
     const updateData = {
       title: req.body.title,
       artist: req.body.artist,
       description: req.body.description,
-      category: req.body.category,
       price: req.body.price,
+      category: req.body.category,
+      stock: req.body.stock,
     };
 
-    // If a new image was uploaded, update the imageUrl
-    if (req.file) {
-      updateData.imageUrl = req.file.filename;
+    // Get the image paths if images are uploaded
+    if (req.files) {
+      const imageUrls = req.files.map(file => file.filename);
+      updateData.imageUrl = imageUrls; // Update imageUrl to the new array of images
     }
 
-    // Find and update the artwork
-    const artwork = await Artwork.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true, runValidators: true } // Return updated document and run schema validators
-    );
+    // Update the artwork in the database
+    const updatedArtwork = await Artwork.findByIdAndUpdate(id, updateData, { new: true });
 
-    if (!artwork) {
+    if (!updatedArtwork) {
       return res.status(404).json({ message: 'Artwork not found' });
     }
 
-    res.json(artwork);
+    res.status(200).json({ message: 'Artwork updated successfully!', artwork: updatedArtwork });
   } catch (error) {
-    console.error('Error updating artwork:', error);
-    
-    if (error.kind === 'ObjectId') {
-      return res.status(400).json({ message: 'Invalid artwork ID format' });
-    }
-
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({ message: 'Validation error', error: error.message });
-    }
-
-    res.status(500).json({ message: 'Error updating artwork', error: error.message });
+    console.error('Error updating artwork:', error.message);
+    res.status(500).json({ error: 'Failed to update artwork' });
   }
 });
 
-
-
-
+// Route to add artwork to cart
 router.post('/cart/add', async (req, res) => {
   const { userId, artworkId, quantity } = req.body;
   try {
+    // Validate ObjectId
+    if (!mongoose.isValidObjectId(artworkId)) {
+      return res.status(400).json({ message: 'Invalid artwork ID format' });
+    }
+
     // First, fetch the artwork to check the artist
     const artwork = await Artwork.findById(artworkId);
     
@@ -197,7 +169,7 @@ router.post('/cart/add', async (req, res) => {
     }
 
     // Check if the logged-in user is the artist of the artwork
-    if (artwork.artistId === userId) {
+    if (artwork.artistId.toString() === userId) {
       return res.status(403).json({ 
         message: 'You cannot purchase your own artwork',
         error: 'SELF_PURCHASE_DENIED'
@@ -245,8 +217,7 @@ router.post('/cart/add', async (req, res) => {
   }
 });
 
-
-
+// Route to get the user's cart
 router.get('/cart/:userId', async (req, res) => {
   const { userId } = req.params;
   
@@ -262,12 +233,16 @@ router.get('/cart/:userId', async (req, res) => {
   }
 });
 
-
-
+// Route to update quantity in cart
 router.post('/cart/update-quantity', async (req, res) => {
   const { userId, artworkId, quantity } = req.body;
 
   try {
+    // Validate ObjectId
+    if (!mongoose.isValidObjectId(artworkId)) {
+      return res.status(400).json({ message: 'Invalid artwork ID format' });
+    }
+
     // Fetch the artwork to check stock availability
     const artwork = await Artwork.findById(artworkId);
     if (!artwork) {
@@ -300,13 +275,12 @@ router.post('/cart/update-quantity', async (req, res) => {
       res.status(404).json({ message: 'Item not found in cart' });
     }
   } catch (error) {
-    console.error('Error updating quantity:', error); // Log the exact error
+    console.error('Error updating quantity:', error);
     res.status(500).json({ message: 'Error updating quantity' });
   }
 });
 
-
-
+// Route to remove item from cart
 router.delete('/cart/remove', async (req, res) => {
   const { userId, artworkId } = req.body;
 
@@ -344,16 +318,10 @@ router.get('/cart/count/:userId', async (req, res) => {
   }
 });
 
-
-
-
-
-
-
 // POST: Add to wishlist
 router.post('/wishlist/add', async (req, res) => {
   const { userId, artworkId } = req.body;
-  console.log(req.body)
+  console.log(req.body);
 
   try {
     const user = await User.findById(userId);
@@ -377,8 +345,6 @@ router.post('/wishlist/add', async (req, res) => {
   }
 });
 
-
-
 // GET: Fetch wishlist for a user
 router.get('/wishlist/:userId', async (req, res) => {
   const { userId } = req.params;
@@ -399,8 +365,6 @@ router.get('/wishlist/:userId', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
-
-
 
 // POST: Remove artwork from wishlist
 router.post('/wishlist/remove', async (req, res) => {
@@ -431,17 +395,29 @@ router.post('/wishlist/remove', async (req, res) => {
   }
 });
 
-
-
 // Endpoint to clear the cart for a user
 router.delete('/cart/clear/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  if (!mongoose.isValidObjectId(userId)) {
+    return res.status(400).json({ message: 'Invalid user ID format' });
+  }
+
   try {
-    const userId = req.params.userId;
     // Clear the cart for the user
     await Cartdata.deleteMany({ userId: userId });
     res.status(200).json({ message: 'Cart cleared successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error clearing cart', error });
+  }
+});
+
+// Route to fetch all categories
+router.get('/category', async (req, res) => {
+  try {
+    const categories = await Category.find(); // Fetch all categories
+    res.status(200).json(categories); // Send categories as response
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching categories', error });
   }
 });
 

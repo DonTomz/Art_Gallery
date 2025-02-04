@@ -10,11 +10,12 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1); // State for the quantity
+  const [isPrint, setIsPrint] = useState(false); // State to track if "Print" is selected
 
   useEffect(() => {
     const fetchArtwork = async () => {
       try {
-        const response = await fetch(`https://art-gallery-kmgs.onrender.com/api/artworks/artwork/${id}`);
+        const response = await fetch(`http://localhost:5000/api/artworks/artwork/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch artwork details');
         }
@@ -46,7 +47,7 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
   }
 
   try {
-    const response = await fetch('https://art-gallery-kmgs.onrender.com/api/artworks/cart/add', {
+    const response = await fetch('http://localhost:5000/api/artworks/cart/add', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, artworkId: artwork._id, quantity }) // Include the quantity in the request
@@ -75,7 +76,7 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
   const handleAddToWishlist = async (artworkId) => {
     try {
       const userId = localStorage.getItem('userId');
-      const response = await axios.post('https://art-gallery-kmgs.onrender.com/api/artworks/wishlist/add', {
+      const response = await axios.post('http://localhost:5000/api/artworks/wishlist/add', {
         userId: userId,
         artworkId: artworkId,
       });
@@ -96,9 +97,17 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
     }
   };
 
+  const handlePrintChange = (e) => {
+    setIsPrint(e.target.value === 'print'); // Update state based on selected option
+  };
+
   if (loading) return <div className="text-center mt-10">Loading artwork details...</div>;
   if (error) return <div className="text-center text-red-500 mt-10">Error: {error}</div>;
   if (!artwork) return null;
+
+  const loggedInUserId = localStorage.getItem('userId'); // Get logged-in user ID
+  const isArtist = loggedInUserId === artwork.artistId.toString(); // Check if user is the artist
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
@@ -107,7 +116,7 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
         <div className="lg:w-1/2 relative">
   <div className="relative overflow-hidden rounded-lg h-[400px] lg:h-[500px] group"> {/* Group for hover effect */}
     <img
-      src={`https://art-gallery-kmgs.onrender.com/uploads/${artwork.imageUrl}`}
+      src={`${artwork.imageUrl}`}
       alt={artwork.title}
       className="w-full h-full object-cover transform transition-transform duration-400 group-hover:scale-110" 
       // Scale effect on hover
@@ -133,31 +142,63 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
             <p className="text-sm text-gray-700 mb-5"><strong>Description:</strong> {artwork.description}</p>
             <p className="text-xl font-semibold text-gray-900 mb-5"><strong>Price:</strong> ₹{artwork.price}</p>
             <p className="text-lg font-semibold text-gray-900 mb-5"><strong>Stock Available:</strong> {artwork.stock}</p> {/* Display Stock */}
-          </div>
 
-          {/* Quantity Selector */}
-          <div className="mb-5">
-            <label htmlFor="quantity" className="block text-lg text-gray-700">Quantity</label>
-            <input
-              type="number"
-              id="quantity"
-              name="quantity"
-              value={quantity}
-              min="1"
-              max={artwork.stock}
-              onChange={handleQuantityChange}
-              className="w-16 p-2 border rounded"
-            />
+            {/* Radio buttons for selecting Original or Print */}
+            <div className="mb-5">
+              <label className="block text-lg text-gray-700">Select Type:</label>
+              <label className="inline-flex items-center mr-4">
+                <input
+                  type="radio"
+                  value="original"
+                  checked={!isPrint}
+                  onChange={handlePrintChange}
+                  className="form-radio"
+                />
+                <span className="ml-2">Original</span>
+              </label>
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  value="print"
+                  checked={isPrint}
+                  onChange={handlePrintChange}
+                  className="form-radio"
+                />
+                <span className="ml-2">Print</span>
+              </label>
+            </div>
+
+            {/* Quantity Selector (only shown if Print is selected) */}
+            {isPrint && (
+              <div className="mb-5">
+                <label htmlFor="quantity" className="block text-lg text-gray-700">Quantity</label>
+                <input
+                  type="number"
+                  id="quantity"
+                  name="quantity"
+                  value={quantity}
+                  min="1"
+                  max={artwork.stock}
+                  onChange={handleQuantityChange}
+                  className="w-16 p-2 border rounded"
+                />
+              </div>
+            )}
           </div>
 
           {/* Buttons for Cart */}
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => handleAddToCart(artwork)}
-              className="bg-yellow-600 hover:bg-indigo-700 text-white hover:text-black font-bold py-2 px-6 rounded-lg transition duration-300"
-            >
-              Add to Cart
-            </button>
+            {/* Conditionally render the Add to Cart button */}
+            {isArtist ? (
+              <p className="text-lg text-red-600">Your Own work</p> // Message for the artist
+            ) : (
+              <button
+                onClick={() => handleAddToCart(artwork)}
+                className="bg-yellow-600 hover:bg-indigo-700 text-white hover:text-black font-bold py-2 px-6 rounded-lg transition duration-300"
+              >
+                Add to Cart
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -166,3 +207,4 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
 }
 
 export default ArtworkDetail;
+

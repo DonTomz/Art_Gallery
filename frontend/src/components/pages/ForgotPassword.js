@@ -23,7 +23,7 @@ const ForgotPassword = () => {
 
         setLoading(true);
         try {
-            const { data } = await axios.post('https://art-gallery-kmgs.onrender.com/api/auth/forgot-password', { email });
+            const { data } = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
             setMessage(data.message);
 
             if (data.message && data.message.toLowerCase().includes('sent')) {

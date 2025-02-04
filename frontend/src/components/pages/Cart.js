@@ -11,7 +11,7 @@ function CartPage() {
       // Fetch cart details from backend, wrapped in useCallback to prevent re-creation on every render
       const fetchCart = useCallback(async () => {
         try {
-          const response = await fetch(`https://art-gallery-kmgs.onrender.com/api/artworks/cart/${userId}`);
+          const response = await fetch(`http://localhost:5000/api/artworks/cart/${userId}`);
           if (response.ok) {
             const cartData = await response.json();
             setCartItems(cartData.items);
@@ -46,7 +46,7 @@ function CartPage() {
     if (newQuantity < 1) return; // Prevent zero or negative quantities
   
     try {
-      const response = await fetch('https://art-gallery-kmgs.onrender.com/api/artworks/cart/update-quantity', {
+      const response = await fetch('http://localhost:5000/api/artworks/cart/update-quantity', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, artworkId, quantity: newQuantity })
@@ -76,7 +76,7 @@ function CartPage() {
   // Handle remove item from cart
   const handleRemoveItem = async (artworkId) => {
     try {
-      const response = await fetch('https://art-gallery-kmgs.onrender.com/api/artworks/cart/remove', {
+      const response = await fetch('http://localhost:5000/api/artworks/cart/remove', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, artworkId })
@@ -118,7 +118,7 @@ function CartPage() {
               >
                 <div className="flex items-center gap-4">
                   <img
-                    src={`https://art-gallery-kmgs.onrender.com/uploads/${item.artworkId.imageUrl}`}
+                    src={`http://localhost:5000/uploads/${item.artworkId.imageUrl}`}
                     alt={item.artworkId.title}
                     className="w-20 h-20 object-contain rounded-lg"
                   />

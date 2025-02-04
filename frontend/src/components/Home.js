@@ -13,11 +13,12 @@ function Home() {
   useEffect(() => {
     const fetchArtworks = async () => {
       try {
-        const response = await fetch('https://art-gallery-kmgs.onrender.com/api/artworks');
+        const response = await fetch('http://localhost:5000/api/artworks');
         if (!response.ok) {
           throw new Error('Failed to fetch artworks');
         }
         const data = await response.json();
+        console.log(data);
         setArtworks(data);
       } catch (error) {
         setError(error.message);
@@ -71,7 +72,8 @@ return (
             onClick={() => handleArtworkClick(artwork._id)}
           >
             <img
-              src={`https://art-gallery-kmgs.onrender.com/uploads/${artwork.imageUrl}`}
+              src={`${artwork.imageUrl}`}
+              // src={`${artwork.imageUrl}`}
               alt={artwork.title}
               className="w-full h-40 object-cover rounded-t-lg"
             />
