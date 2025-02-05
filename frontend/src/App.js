@@ -24,6 +24,7 @@ import CheckoutPage from './components/pages/Checkout';
 import SuccessPage from './components/pages/Success';
 import MyOrdersPage from './components/pages/MyOrders';
 import WhatsAppChat from './components/WhatsAppChat';
+import ARViewer from './components/pages/ARViewer';
 
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -72,7 +73,7 @@ function App() {
             <Route path='/checkout' element ={<CheckoutPage/>}/>
             <Route path="/success" element={<SuccessPage />} />
             <Route path="/myorders" element={<MyOrdersPage />} />
-            
+            <Route path="/ar-viewer" element={<ARViewer />} />
           </Routes>
         </main>
         <Footer />

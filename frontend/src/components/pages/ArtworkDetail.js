@@ -101,6 +101,13 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
     setIsPrint(e.target.value === 'print'); // Update state based on selected option
   };
 
+  const handleImageClick = () => {
+    if (artwork && artwork.imageUrl.length > 0) {
+        const imageUrl = artwork.imageUrl[0];
+        window.open(`/ar-viewer.html?image=${encodeURIComponent(imageUrl)}`, '_blank');
+    }
+  };
+
   if (loading) return <div className="text-center mt-10">Loading artwork details...</div>;
   if (error) return <div className="text-center text-red-500 mt-10">Error: {error}</div>;
   if (!artwork) return null;
@@ -119,7 +126,7 @@ function ArtworkDetail({ openModal }) { // Accept openModal as a prop
       src={`${artwork.imageUrl[0]}`}
       alt={artwork.title}
       className="w-full h-full object-cover transform transition-transform duration-400 group-hover:scale-110" 
-      // Scale effect on hover
+      onClick={handleImageClick} // Add click handler
     />
     {/* Wishlist Icon positioned at the top-right corner */}
     <button
