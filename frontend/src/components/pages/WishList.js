@@ -73,7 +73,7 @@ function WishlistPage() {
               {/* Artwork Image */}
               <div className="overflow-hidden rounded-lg mb-4">
                 <img 
-                  src={`http://localhost:5000/uploads/${artwork.imageUrl}`} 
+                  src={`${artwork.imageUrl[0]}`} 
                   alt={artwork.title} 
                   className="w-full h-56 object-cover transition-transform duration-300 ease-in-out hover:scale-105 rounded-md"
                 />

@@ -34,7 +34,7 @@ const ArtistArtworks = () => {
           {artworks.map((artwork) => (
             <div key={artwork._id} className="artwork-card bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
               <img
-                src={`${artwork.imageUrl}`}
+                src={`${artwork.imageUrl[0]}`}
                 alt={artwork.title}
                 className="w-full h-64 object-cover"
               />

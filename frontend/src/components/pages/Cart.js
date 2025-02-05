@@ -118,7 +118,7 @@ function CartPage() {
               >
                 <div className="flex items-center gap-4">
                   <img
-                    src={`http://localhost:5000/uploads/${item.artworkId.imageUrl}`}
+                    src={`${item.artworkId.imageUrl[0]}`}
                     alt={item.artworkId.title}
                     className="w-20 h-20 object-contain rounded-lg"
                   />

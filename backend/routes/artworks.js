@@ -134,7 +134,7 @@ router.put('/edit/:id', upload.array('images', 10), async (req, res) => {
 
     // Get the image paths if images are uploaded
     if (req.files) {
-      const imageUrls = req.files.map(file => file.filename);
+      const imageUrls = req.files.map((file) => file.path);
       updateData.imageUrl = imageUrls; // Update imageUrl to the new array of images
     }
 

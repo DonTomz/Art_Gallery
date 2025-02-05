@@ -40,7 +40,7 @@ function Home() {
     const artistMatch = artwork.artist.toLowerCase().includes(searchQuery.toLowerCase());
     const categoryMatch = artwork.category.toLowerCase().includes(searchQuery.toLowerCase()); // Check category
     return titleMatch || artistMatch || categoryMatch; // Include category in search
-  });
+  }).reverse(); // Reverse the order to show the latest artwork first
 
   if (loading) return <div className="text-center text-lg font-medium">Loading artworks...</div>; 
   if (error) return <div className="text-center text-red-500 font-semibold">Error: {error}</div>; 
@@ -72,7 +72,7 @@ return (
             onClick={() => handleArtworkClick(artwork._id)}
           >
             <img
-              src={`${artwork.imageUrl}`}
+              src={`${artwork.imageUrl[0]}`}
               // src={`${artwork.imageUrl}`}
               alt={artwork.title}
               className="w-full h-40 object-cover rounded-t-lg"

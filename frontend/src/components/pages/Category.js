@@ -49,7 +49,7 @@ const Category = () => {
                 onClick={() => handleArtworkClick(artwork._id)}
               >
                 <img
-                  src={`http://localhost:5000/uploads/${artwork.imageUrl}`}
+                  src={`${artwork.imageUrl[0]}`}
                   alt={artwork.title}
                   className="w-full h-48 object-cover"
                 />

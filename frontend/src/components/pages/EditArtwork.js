@@ -11,6 +11,7 @@ const EditArtwork = () => {
     price: '',
     stock: '',
     category: '',
+    imageUrl: [],
   });
   const [imageFiles, setImageFiles] = useState([]);
   const [error, setError] = useState('');
@@ -27,7 +28,7 @@ const EditArtwork = () => {
   useEffect(() => {
     const fetchArtwork = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/artworks/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/artworks/artwork/${id}`);
         setArtwork(response.data);
       } catch (err) {
         setError('Error fetching artwork');
@@ -49,6 +50,10 @@ const EditArtwork = () => {
 
   const handleRemoveImage = (index) => {
     setImageFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    setArtwork((prevArtwork) => ({
+      ...prevArtwork,
+      imageUrl: prevArtwork.imageUrl.filter((_, i) => i !== index),
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -60,6 +65,12 @@ const EditArtwork = () => {
     formData.append('stock', artwork.stock);
     formData.append('category', artwork.category);
 
+    // Include existing images
+    artwork.imageUrl.forEach((image) => {
+      formData.append('images', image); // Assuming image is the filename or path
+    });
+
+    // Append new images
     imageFiles.forEach((file) => {
       formData.append('images', file);
     });
@@ -136,11 +147,11 @@ const EditArtwork = () => {
               Add Another Image
             </button>
             <div className="mt-2">
-              {imageFiles.length > 0 && (
+              {artwork.imageUrl.length > 0 && (
                 <ul>
-                  {imageFiles.map((file, index) => (
+                  {artwork.imageUrl.map((image, index) => (
                     <li key={index} className="flex justify-between items-center">
-                      <span>{file.name}</span>
+                      <span>{image}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveImage(index)}
