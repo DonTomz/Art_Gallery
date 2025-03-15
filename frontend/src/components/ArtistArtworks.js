@@ -11,7 +11,7 @@ const ArtistArtworks = () => {
     const artistId = localStorage.getItem('userId');
     const fetchArtworks = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/artworks/mine/${artistId}`);
+        const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/artworks/mine/${artistId}`);
         setArtworks(response.data.artworks);
       } catch (err) {
         setError('Error fetching artworks');
@@ -43,7 +43,7 @@ const ArtistArtworks = () => {
                 <p className="text-gray-600 mb-2">{artwork.description}</p>
                 <p className="text-lg font-medium mb-4">Price: ₹{artwork.price}</p>
                 <Link
-                  to={`/artist/artworks/edit/${artwork._id}`}
+                  id={`edit-artwork-${artwork._id}`} to={`/artist/artworks/edit/${artwork._id}`}
                   className="inline-block bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-200"
                 >
                   Edit 

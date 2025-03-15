@@ -16,7 +16,7 @@ const Category = () => {
     const fetchArtworks = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://localhost:5000/api/artworks/category/${category}`);
+        const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/artworks/category/${category}`);
         setArtworks(response.data);
         setLoading(false);
       } catch (error) {
@@ -56,7 +56,7 @@ const Category = () => {
                 <div className="p-4">
                   <h3 className="text-lg font-semibold">{artwork.title}</h3>
                   <p className="text-gray-600">Artist: {artwork.artist}</p>
-                  <p className="text-gray-800 font-bold">${artwork.price}</p>
+                  <p className="text-gray-800 font-bold">₹{artwork.price}</p>
                 </div>
               </div>
             ))

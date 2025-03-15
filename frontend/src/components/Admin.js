@@ -2,17 +2,22 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 // import Footer from './Footer';
+import CustomAlert from './CustomAlert';
 
 function AdminPage() {
   const [users, setUsers] = useState([]);
   const [artists, setArtists] = useState([]);
   const [artworks, setArtworks] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [deliveryBoys, setDeliveryBoys] = useState([]);
+  const [newDeliveryBoyName, setNewDeliveryBoyName] = useState('');
+  const [newDeliveryBoyEmail, setNewDeliveryBoyEmail] = useState('');
   const [newCategory, setNewCategory] = useState('');
   const [newCategoryDescription, setNewCategoryDescription] = useState('');
   const [activeSection, setActiveSection] = useState('users'); 
   const [artistSubSection, setArtistSubSection] = useState('all'); 
   const navigate = useNavigate();
+  const [alert, setAlert] = useState({ show: false, message: '', type: 'info' });
 
 // Check if the user is an admin and redirect if not
 useEffect(() => {
@@ -24,12 +29,13 @@ useEffect(() => {
   fetchData();
   fetchArtworks();
   fetchCategories();
+  fetchDeliveryBoys();
 }, [navigate]);
 
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/users');
+      const response = await axios.get('https://art-gallery-kmgs.onrender.com/api/admin/users');
       setUsers(response.data.users);
       setArtists(response.data.artists);
       // console.log(response.data);
@@ -41,7 +47,7 @@ useEffect(() => {
 
   const fetchArtworks = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/artworks');
+      const response = await axios.get('https://art-gallery-kmgs.onrender.com/api/admin/artworks');
       setArtworks(response.data.artworks);
       // console.log(response.data);
     } catch (error) {
@@ -51,7 +57,7 @@ useEffect(() => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/categories');
+      const response = await axios.get('https://art-gallery-kmgs.onrender.com/api/admin/categories');
       console.log(response.data)
       setCategories(response.data);
     } catch (error) {
@@ -59,10 +65,51 @@ useEffect(() => {
     }
   };
 
+  const fetchDeliveryBoys = async () => {
+    try {
+      const response = await axios.get('https://art-gallery-kmgs.onrender.com/api/admin/delivery-boys');
+      setDeliveryBoys(response.data);
+    } catch (error) {
+      console.error('Error fetching delivery boys', error);
+    }
+  };
+
+  // const handleAddDeliveryBoy = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     await axios.post('https://art-gallery-kmgs.onrender.com/api/admin/user/register', { 
+  //       name: newDeliveryBoyName, 
+  //       email: newDeliveryBoyEmail,
+  //       role: 'delivery'
+  //     });
+  //     setNewDeliveryBoyName('');
+  //     setNewDeliveryBoyEmail('');
+  //     fetchDeliveryBoys();
+  //     showAlert('Delivery agent registered successfully', 'success');
+  //   } catch (error) {
+  //     showAlert(error.response?.data?.message || 'Error registering delivery agent', 'error');
+  //   }
+  // };
+
+  // const handleDeleteDeliveryBoy = async (deliveryBoyId) => {
+  //   try {
+  //     await axios.delete(`https://art-gallery-kmgs.onrender.com/api/admin/delivery-boy/${deliveryBoyId}`);
+  //     fetchDeliveryBoys();
+  //     showAlert('Delivery boy deleted successfully', 'success');
+  //   } catch (error) {
+  //     showAlert(error.response?.data?.message || 'Error deleting delivery boy', 'error');
+  //   }
+  // };
+
+  const showAlert = (message, type = 'info') => {
+    setAlert({ show: true, message, type });
+    setTimeout(() => setAlert({ show: false, message: '', type: 'info' }), 3000);
+  };
+
   const handleAddCategory = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/admin/category/add', { 
+      await axios.post('https://art-gallery-kmgs.onrender.com/api/admin/category/add', { 
         name: newCategory, 
         description: newCategoryDescription
       });
@@ -76,7 +123,7 @@ useEffect(() => {
 
   const handleDeleteCategory = async (categoryId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/admin/category/${categoryId}`);
+      await axios.delete(`https://art-gallery-kmgs.onrender.com/api/admin/category/${categoryId}`);
       fetchCategories(); // Refresh categories after deletion
     } catch (error) {
       console.error('Error deleting category', error);
@@ -86,7 +133,7 @@ useEffect(() => {
   // Approve artist and update the local state
   const approveArtist = async (artistId) => {
     try {
-      await axios.put(`http://localhost:5000/api/admin/artist/approve/${artistId}`);
+      await axios.put(`https://art-gallery-kmgs.onrender.com/api/admin/artist/approve/${artistId}`);
       setArtists(
         artists.map((artist) =>
           artist._id === artistId ? { ...artist, isApproved: true } : artist
@@ -100,8 +147,8 @@ useEffect(() => {
   // Disapprove artist and refetch updated data
   const disapproveArtist = async (artistId) => {
     try {
-      await axios.put(`http://localhost:5000/api/admin/artist/disapprove/${artistId}`);
-      const response = await axios.get('http://localhost:5000/api/admin/users');
+      await axios.put(`https://art-gallery-kmgs.onrender.com/api/admin/artist/disapprove/${artistId}`);
+      const response = await axios.get('https://art-gallery-kmgs.onrender.com/api/admin/users');
       setArtists(response.data.artists);
     } catch (error) {
       console.error('Error disapproving artist', error);
@@ -111,7 +158,7 @@ useEffect(() => {
   // Block user
   const blockUser = async (userId) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/admin/user/block/${userId}`);
+      const response = await axios.put(`https://art-gallery-kmgs.onrender.com/api/admin/user/block/${userId}`);
       setUsers(users.map(user => user._id === userId ? { ...user, isBlock: true } : user));
       console.log(response.data.message);
     } catch (error) {
@@ -122,7 +169,7 @@ useEffect(() => {
   // Unblock user
   const unblockUser = async (userId) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/admin/user/unblock/${userId}`);
+      const response = await axios.put(`https://art-gallery-kmgs.onrender.com/api/admin/user/unblock/${userId}`);
       setUsers(users.map(user => user._id === userId ? { ...user, isBlock: false } : user));
       console.log(response.data.message);
     } catch (error) {
@@ -258,7 +305,7 @@ useEffect(() => {
 // Toggle artwork visibility on the home page
 const toggleArtworkVisibility = async (artworkId) => {
   try {
-    await axios.put(`http://localhost:5000/api/admin/artworks/togglehomepage/${artworkId}`);
+    await axios.put(`https://art-gallery-kmgs.onrender.com/api/admin/artworks/togglehomepage/${artworkId}`);
     setArtworks(
       artworks.map((artwork) =>
         artwork._id === artworkId ? { ...artwork, show: !artwork.show } : artwork
@@ -350,8 +397,56 @@ const renderCategoriesSection = () => (
   </div>
 );
 
+const approveDeliveryBoy = async (deliveryBoyId) => {
+  try {
+    await axios.put(`https://art-gallery-kmgs.onrender.com/api/admin/delivery-boy/approve/${deliveryBoyId}`);
+    fetchDeliveryBoys();
+    showAlert('Delivery boy approved successfully', 'success');
+  } catch (error) {
+    showAlert(error.response?.data?.message || 'Error approving delivery boy', 'error');
+  }
+};
+
+const renderDeliveryBoysSection = () => (
+  <div className="p-6">
+    <h3 className="text-2xl font-semibold mb-6">Delivery Agents</h3>
+    <table className="min-w-full bg-white border border-gray-200 shadow-lg rounded-lg">
+      <thead>
+        <tr>
+          <th className="py-3 px-6 bg-gray-200 text-left text-sm font-semibold text-gray-700">Name</th>
+          <th className="py-3 px-6 bg-gray-200 text-left text-sm font-semibold text-gray-700">Email</th>
+          <th className="py-3 px-6 bg-gray-200 text-left text-sm font-semibold text-gray-700">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {deliveryBoys.map((deliveryBoy) => (
+          <tr key={deliveryBoy._id} className="border-t border-gray-100">
+            <td className="py-4 px-6 text-sm">{deliveryBoy.username}</td>
+            <td className="py-4 px-6 text-sm">{deliveryBoy.email}</td>
+            <td className="py-4 px-6">
+              <button
+                onClick={() => approveDeliveryBoy(deliveryBoy._id)}
+                className="bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 rounded"
+              >
+                Approve
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
   return (
     <div className="flex h-screen">
+      {alert.show && (
+        <CustomAlert
+          message={alert.message}
+          type={alert.type}
+          onClose={() => setAlert({ show: false, message: '', type: 'info' })}
+        />
+      )}
       {/* Left Sidebar */}
       <div className="w-64 bg-gray-800 text-white flex-shrink-0 p-6 overflow-y-auto">
         <h2 className="text-2xl font-bold mb-8">Admin Dashboard</h2>
@@ -380,6 +475,12 @@ const renderCategoriesSection = () => (
           >
             Categories
           </li>
+          <li
+            className={`cursor-pointer ${activeSection === 'delivery' ? 'font-semibold' : ''}`}
+            onClick={() => setActiveSection('delivery')}
+          >
+            Delivery
+          </li>
         </ul>
       </div>
   
@@ -389,12 +490,10 @@ const renderCategoriesSection = () => (
         {activeSection === 'artists' && renderArtistsSection()}
         {activeSection === 'artworks' && renderArtworksSection()}
         {activeSection === 'categories' && renderCategoriesSection()}
+        {activeSection === 'delivery' && renderDeliveryBoysSection()}
       </div>
     </div>
   );
-  
-  
-  
   
 }
 

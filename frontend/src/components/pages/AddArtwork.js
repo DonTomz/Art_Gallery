@@ -27,7 +27,7 @@ function AddArtwork() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/artworks/category'); // Adjust the endpoint as necessary
+        const response = await axios.get('https://art-gallery-kmgs.onrender.com/api/artworks/category'); // Adjust the endpoint as necessary
         setCategories(response.data); // Assuming the response is an array of categories
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -43,32 +43,169 @@ function AddArtwork() {
       ...prevArtwork,
       [name]: value,
     }));
+
+    // Live validation
+    const newErrors = { ...errors };
+    
+    switch (name) {
+      case 'title':
+        if (!value.trim()) {
+          newErrors.title = "Title is required.";
+        } else if (value.length < 3) {
+          newErrors.title = "Title must be at least 3 characters long.";
+        } else {
+          delete newErrors.title;
+        }
+        break;
+
+      case 'artist':
+        if (!value.trim()) {
+          newErrors.artist = "Artist is required.";
+        } else if (value.length < 2) {
+          newErrors.artist = "Artist name must be at least 2 characters long.";
+        } else {
+          delete newErrors.artist;
+        }
+        break;
+
+      case 'description':
+        if (!value.trim()) {
+          newErrors.description = "Description is required.";
+        } else if (value.length < 10) {
+          newErrors.description = "Description must be at least 10 characters long.";
+        } else {
+          delete newErrors.description;
+        }
+        break;
+
+      case 'price':
+        if (!value) {
+          newErrors.price = "Price is required.";
+        } else if (isNaN(value) || parseFloat(value) <= 0) {
+          newErrors.price = "Price must be greater than zero.";
+        } else {
+          delete newErrors.price;
+        }
+        break;
+
+      case 'stock':
+        if (!value) {
+          newErrors.stock = "Stock is required.";
+        } else if (isNaN(value) || parseInt(value) < 0) {
+          newErrors.stock = "Stock cannot be negative.";
+        } else {
+          delete newErrors.stock;
+        }
+        break;
+
+      case 'category':
+        if (!value) {
+          newErrors.category = "Category is required.";
+        } else {
+          delete newErrors.category;
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    setErrors(newErrors);
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0]; // Get the selected file
+    const file = e.target.files[0];
     if (file) {
-      setImageFiles((prevFiles) => [...prevFiles, file]); // Add the new file to the existing files
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setErrors(prev => ({
+          ...prev,
+          images: "Please upload only image files."
+        }));
+        return;
+      }
+      
+      // Validate file size (e.g., max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setErrors(prev => ({
+          ...prev,
+          images: "Image size should be less than 5MB."
+        }));
+        return;
+      }
+
+      setImageFiles((prevFiles) => {
+        const newFiles = [...prevFiles, file];
+        // Clear image error if at least one valid image is uploaded
+        if (newFiles.length > 0) {
+          setErrors(prev => {
+            const newErrors = { ...prev };
+            delete newErrors.images;
+            return newErrors;
+          });
+        }
+        return newFiles;
+      });
     }
   };
 
   const handleRemoveImage = (index) => {
-    setImageFiles((prevFiles) => prevFiles.filter((_, i) => i !== index)); // Remove the file at the specified index
+    setImageFiles((prevFiles) => {
+      const newFiles = prevFiles.filter((_, i) => i !== index);
+      // Add error if no images remain
+      if (newFiles.length === 0) {
+        setErrors(prev => ({
+          ...prev,
+          images: "At least one image is required."
+        }));
+      }
+      return newFiles;
+    });
   };
 
   const validate = () => {
     const newErrors = {};
-    if (!artwork.title) newErrors.title = "Title is required.";
-    if (!artwork.artist) newErrors.artist = "Artist is required.";
-    if (!artwork.description) newErrors.description = "Description is required.";
-    if (!artwork.price) newErrors.price = "Price is required.";
-    if (artwork.price <= 0) newErrors.price = "Price must be greater than zero.";
-    if (!artwork.stock) newErrors.stock = "Stock is required.";
-    if (artwork.stock < 0) newErrors.stock = "Stock cannot be negative.";
-    if (!artwork.category) newErrors.category = "Category is required.";
-    if (imageFiles.length === 0) newErrors.images = "At least one image is required.";
+    
+    if (!artwork.title.trim()) {
+      newErrors.title = "Title is required.";
+    } else if (artwork.title.length < 3) {
+      newErrors.title = "Title must be at least 3 characters long.";
+    }
+
+    if (!artwork.artist.trim()) {
+      newErrors.artist = "Artist is required.";
+    } else if (artwork.artist.length < 2) {
+      newErrors.artist = "Artist name must be at least 2 characters long.";
+    }
+
+    if (!artwork.description.trim()) {
+      newErrors.description = "Description is required.";
+    } else if (artwork.description.length < 10) {
+      newErrors.description = "Description must be at least 10 characters long.";
+    }
+
+    if (!artwork.price) {
+      newErrors.price = "Price is required.";
+    } else if (isNaN(artwork.price) || parseFloat(artwork.price) <= 0) {
+      newErrors.price = "Price must be greater than zero.";
+    }
+
+    if (!artwork.stock) {
+      newErrors.stock = "Stock is required.";
+    } else if (isNaN(artwork.stock) || parseInt(artwork.stock) < 0) {
+      newErrors.stock = "Stock cannot be negative.";
+    }
+
+    if (!artwork.category) {
+      newErrors.category = "Category is required.";
+    }
+
+    if (imageFiles.length === 0) {
+      newErrors.images = "At least one image is required.";
+    }
+
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Return true if no errors
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
@@ -90,7 +227,7 @@ function AddArtwork() {
     });
   
     try {
-      const response = await fetch("http://localhost:5000/api/artworks/add", {
+      const response = await fetch("https://art-gallery-kmgs.onrender.com/api/artworks/add", {
         method: "POST",
         body: formData,
       });

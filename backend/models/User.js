@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'artist', 'admin'],
+    enum: ['user', 'artist', 'admin', 'delivery'],
     required: true,
   },
   phoneNumber: {
@@ -81,6 +81,27 @@ userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
+
+// Function to register a new user (including delivery agents)
+userSchema.statics.registerUser = async function (userData) {
+  const { username, email, password, role } = userData;
+
+  // Check if the user already exists
+  const existingUser = await this.findOne({ email });
+  if (existingUser) {
+    throw new Error('User already exists');
+  }
+
+  const user = new this({
+    username,
+    email,
+    password,
+    role, // Set the role from userData
+  });
+
+  await user.save();
+  return user;
+};
 
 // Create the User model
 const User = mongoose.model('users', userSchema);

@@ -154,7 +154,7 @@ router.put('/edit/:id', upload.array('images', 10), async (req, res) => {
 
 // Route to add artwork to cart
 router.post('/cart/add', async (req, res) => {
-  const { userId, artworkId, quantity } = req.body;
+  const { userId, artworkId, quantity, artworkType } = req.body;
   try {
     // Validate ObjectId
     if (!mongoose.isValidObjectId(artworkId)) {
@@ -181,7 +181,7 @@ router.post('/cart/add', async (req, res) => {
 
     if (!cart) {
       // If the cart doesn't exist, create a new one and add the item
-      cart = new Cartdata({ userId, items: [{ artworkId, quantity }] });
+      cart = new Cartdata({ userId, items: [{ artworkId, quantity, artworkType }] });
     } else {
       // Find if the item is already in the cart
       const itemIndex = cart.items.findIndex(item => 
@@ -196,7 +196,7 @@ router.post('/cart/add', async (req, res) => {
         });
       } else {
         // If the item is not in the cart, add it
-        cart.items.push({ artworkId, quantity });
+        cart.items.push({ artworkId, quantity, artworkType });
       }
     }
 
@@ -418,6 +418,32 @@ router.get('/category', async (req, res) => {
     res.status(200).json(categories); // Send categories as response
   } catch (error) {
     res.status(500).json({ message: 'Error fetching categories', error });
+  }
+});
+
+// GET: Check if artwork is in user's wishlist
+router.get('/wishlist/check', async (req, res) => {
+  const { userId, artworkId } = req.query;
+
+  try {
+    // Validate the IDs
+    if (!mongoose.isValidObjectId(userId) || !mongoose.isValidObjectId(artworkId)) {
+      return res.status(400).json({ message: 'Invalid user ID or artwork ID format' });
+    }
+
+    // Find the user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if the artwork is in the user's wishlist
+    const isInWishlist = user.wishlist.includes(artworkId);
+
+    res.status(200).json({ isInWishlist });
+  } catch (error) {
+    console.error('Error checking wishlist status:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

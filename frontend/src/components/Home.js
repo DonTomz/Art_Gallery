@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from './useAuth';
+import LatestArtworksBanner from './LatestArtworksBanner';
 
 function Home() {
   useAuth();
   const [artworks, setArtworks] = useState([]);
+  const [latestArtworks, setLatestArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
@@ -13,13 +15,14 @@ function Home() {
   useEffect(() => {
     const fetchArtworks = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/artworks');
+        const response = await fetch('https://art-gallery-kmgs.onrender.com/api/artworks');
         if (!response.ok) {
           throw new Error('Failed to fetch artworks');
         }
         const data = await response.json();
         console.log(data);
         setArtworks(data);
+        setLatestArtworks(data.slice(-3).reverse());
       } catch (error) {
         setError(error.message);
       } finally {
@@ -48,6 +51,7 @@ function Home() {
 
 return (
   <div className="bg-gray-100 min-h-screen py-10 px-4">
+    {/* <LatestArtworksBanner artworks={latestArtworks} /> */}
     <div className="flex justify-between items-center mb-10">
       <h1 className="text-4xl font-bold text-gray-800">Featured Artworks</h1>
 
@@ -60,6 +64,7 @@ return (
         className="border p-2 w-64 rounded-lg"
       />
     </div>
+    <LatestArtworksBanner artworks={latestArtworks} />
 
     <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {filteredArtworks.length === 0 ? (

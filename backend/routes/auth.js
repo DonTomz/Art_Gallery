@@ -11,7 +11,13 @@ const router = express.Router();
 
 // Register new user, artist, or admin
 router.post('/register', async (req, res) => {
-  const { username, email, password, role } = req.body; // role added here
+  const { username, email, password, role } = req.body;
+  
+  // Validate role
+  const validRoles = ['user', 'artist', 'admin', 'delivery'];
+  if (!validRoles.includes(role)) {
+    return res.status(400).json({ message: 'Invalid role' });
+  }
 
   console.log('Incoming request data:', req.body); // Debug: Check incoming data
 

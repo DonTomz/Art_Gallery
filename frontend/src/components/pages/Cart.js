@@ -11,7 +11,7 @@ function CartPage() {
       // Fetch cart details from backend, wrapped in useCallback to prevent re-creation on every render
       const fetchCart = useCallback(async () => {
         try {
-          const response = await fetch(`http://localhost:5000/api/artworks/cart/${userId}`);
+          const response = await fetch(`https://art-gallery-kmgs.onrender.com/api/artworks/cart/${userId}`);
           if (response.ok) {
             const cartData = await response.json();
             setCartItems(cartData.items);
@@ -42,14 +42,19 @@ function CartPage() {
   };
 
   // Handle quantity change with stock limit check
-  const handleQuantityChange = async (artworkId, newQuantity) => {
+  const handleQuantityChange = async (artworkId, newQuantity, artworkType) => {
     if (newQuantity < 1) return; // Prevent zero or negative quantities
   
     try {
-      const response = await fetch('http://localhost:5000/api/artworks/cart/update-quantity', {
+      const response = await fetch('https://art-gallery-kmgs.onrender.com/api/artworks/cart/update-quantity', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, artworkId, quantity: newQuantity })
+        body: JSON.stringify({ 
+          userId, 
+          artworkId, 
+          quantity: newQuantity,
+          artworkType: artworkType || 'original'
+        })
       });
   
       if (response.ok) {
@@ -76,7 +81,7 @@ function CartPage() {
   // Handle remove item from cart
   const handleRemoveItem = async (artworkId) => {
     try {
-      const response = await fetch('http://localhost:5000/api/artworks/cart/remove', {
+      const response = await fetch('https://art-gallery-kmgs.onrender.com/api/artworks/cart/remove', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, artworkId })
@@ -118,7 +123,7 @@ function CartPage() {
               >
                 <div className="flex items-center gap-4">
                   <img
-                    src={`${item.artworkId.imageUrl[0]}`}
+                    src={item.artworkId.imageUrl && item.artworkId.imageUrl.length > 0 ? item.artworkId.imageUrl[0] : 'default_image_url.jpg'}
                     alt={item.artworkId.title}
                     className="w-20 h-20 object-contain rounded-lg"
                   />
@@ -145,7 +150,7 @@ function CartPage() {
                       handleQuantityChange(
                         item.artworkId._id,
                         parseInt(e.target.value),
-                        item.artworkId.stock
+                        item.artworkType
                       )
                     }
                     className="w-16 border rounded-lg p-2 text-center"

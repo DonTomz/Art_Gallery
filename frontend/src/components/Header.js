@@ -32,7 +32,7 @@ const Header = ({ openModal, openRegisterModal }) => {
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
     const storedRole = localStorage.getItem('role');
-    const userId = localStorage.getItem('userId'); // Get userId from local storage
+    const userId = localStorage.getItem('userId');
 
     if (storedUsername) {
       setUsername(storedUsername);
@@ -41,17 +41,16 @@ const Header = ({ openModal, openRegisterModal }) => {
       setRole(storedRole);
     }
 
-    // Fetch cart items count if user is logged in
-    if (userId) {
+    // Only fetch cart count for users and artists, not for delivery partners
+    if (userId && storedRole !== 'admin' && storedRole !== 'delivery') {
       const fetchCartCount = async () => {
         try {
-          const response = await axios.get(`http://localhost:5000/api/artworks/cart/count/${userId}`);
-          setCartItemCount(response.data.count); // Assuming the API returns { count: number }
+          const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/artworks/cart/count/${userId}`);
+          setCartItemCount(response.data.count);
         } catch (error) {
           console.error('Error fetching cart count:', error);
         }
       };
-
       fetchCartCount();
     }
 
@@ -134,7 +133,31 @@ const Header = ({ openModal, openRegisterModal }) => {
             </button>
             {dropdownVisible && (
               <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                {role !== 'admin' && (
+                {role === 'delivery' ? (
+                  <>
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
+                      onClick={() => setDropdownVisible(false)}
+                    >
+                      <i className="fas fa-user mr-2"></i>Profile
+                    </Link>
+                    <Link
+                      to="/my-deliveries"
+                      className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
+                      onClick={() => setDropdownVisible(false)}
+                    >
+                      <i className="fas fa-truck mr-2"></i>My Deliveries
+                    </Link>
+                    <Link
+                      to="/delivery-status"
+                      className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
+                      onClick={() => setDropdownVisible(false)}
+                    >
+                      <i className="fas fa-tasks mr-2"></i>Delivery Status
+                    </Link>
+                  </>
+                ) : role !== 'admin' && (
                   <>
                     <Link
                       to="/profile"
@@ -166,7 +189,7 @@ const Header = ({ openModal, openRegisterModal }) => {
                       className="block px-4 py-2 text-black hover:bg-gray-100 no-underline"
                       onClick={() => setDropdownVisible(false)}
                     >
-                      <i className="fas fa-palette mr-2"></i>Your Works
+                      <i id="myartworks" className="fas fa-palette mr-2"></i>Your Works
                     </Link>
                   </>
                 )}

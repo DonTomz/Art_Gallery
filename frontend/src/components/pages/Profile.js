@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import useAuth from '../useAuth';
+import CustomAlert from '../CustomAlert';
 
 function ProfilePage() {
   useAuth();
@@ -16,13 +17,17 @@ function ProfilePage() {
   const [phoneNumberError, setPhoneNumberError] = useState('');
   const [profilePicError, setProfilePicError] = useState('');
   const [artistDocumentError, setArtistDocumentError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
 
   const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/users/get/${userId}`);
+        const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/users/get/${userId}`);
         const data = response.data;
         setUsername(data.username);
         setEmail(data.email);
@@ -41,28 +46,62 @@ function ProfilePage() {
     fetchUserData();
   }, [userId]);
 
+  const validateUsername = (value) => {
+    if (!value.trim()) {
+      setUsernameError('Username is required');
+      return false;
+    }
+    if (value.length < 3) {
+      setUsernameError('Username must be at least 3 characters long');
+      return false;
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+      setUsernameError('Username can only contain letters, numbers, and underscores');
+      return false;
+    }
+    setUsernameError('');
+    return true;
+  };
+
+  const validateEmail = (value) => {
+    if (!value.trim()) {
+      setEmailError('Email is required');
+      return false;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      setEmailError('Please enter a valid email address');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
+
+  const validatePhoneNumber = (value) => {
+    if (!value) {
+      setPhoneNumberError('');
+      return true; // Phone number is optional
+    }
+    if (!/^\d{10}$/.test(value)) {
+      setPhoneNumberError('Phone number must be exactly 10 digits');
+      return false;
+    }
+    setPhoneNumberError('');
+    return true;
+  };
+
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     
-    if (phoneNumber && !/^\d{0,10}$/.test(phoneNumber)) {
-      setPhoneNumberError('Phone number must be up to 10 digits.');
-      return;
-    } else {
-      setPhoneNumberError('');
-    }
+    const isUsernameValid = validateUsername(username);
+    const isEmailValid = validateEmail(email);
+    const isPhoneValid = validatePhoneNumber(phoneNumber);
+    const isProfilePicValid = !profilePic || /\.(jpg|jpeg|png)$/i.test(profilePic.name);
+    const isArtistDocValid = !artistDocument || /\.pdf$/i.test(artistDocument.name);
 
-    if (profilePic && !/\.(jpg|jpeg|png)$/i.test(profilePic.name)) {
-      setProfilePicError('Profile picture must be a JPG, JPEG, or PNG file.');
+    if (!isUsernameValid || !isEmailValid || !isPhoneValid || !isProfilePicValid || !isArtistDocValid) {
+      setAlertMessage('Please fix the validation errors before submitting.');
+      setShowAlert(true);
       return;
-    } else {
-      setProfilePicError('');
-    }
-
-    if (artistDocument && !/\.pdf$/i.test(artistDocument.name)) {
-      setArtistDocumentError('Documentation must be a PDF file.');
-      return;
-    } else {
-      setArtistDocumentError('');
     }
 
     const formData = new FormData();
@@ -76,13 +115,15 @@ function ProfilePage() {
     }
 
     try {
-      await axios.put(`http://localhost:5000/api/users/${userId}`, formData, {
+      await axios.put(`https://art-gallery-kmgs.onrender.com/api/users/${userId}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      alert('Profile updated successfully');
+      setAlertMessage('Profile updated successfully');
+      setShowAlert(true);
     } catch (error) {
       console.error('Error updating profile', error);
-      alert('Error updating profile');
+      setAlertMessage('Error updating profile: ' + (error.response?.data?.message || 'Unknown error occurred'));
+      setShowAlert(true);
     }
   };
 
@@ -97,14 +138,26 @@ function ProfilePage() {
     }
   };
 
-  const handlePhoneNumberChange = (e) => {
+  const handleUsernameChange = (e) => {
     const value = e.target.value;
+    setUsername(value);
+    validateUsername(value);
+  };
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    validateEmail(value);
+  };
+
+  const handlePhoneNumberChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '').slice(0, 10); // Only allow digits and limit to 10
     setPhoneNumber(value);
-    if (value && !/^\d{0,10}$/.test(value)) {
-      setPhoneNumberError('Phone number must be up to 10 digits.');
-    } else {
-      setPhoneNumberError('');
-    }
+    validatePhoneNumber(value);
+  };
+
+  const closeAlert = () => {
+    setShowAlert(false);
   };
 
   return (
@@ -139,20 +192,22 @@ function ProfilePage() {
             <input
               type="text"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full border border-gray-300 p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              onChange={handleUsernameChange}
+              className={`w-full border ${usernameError ? 'border-red-500' : 'border-gray-300'} p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500`}
               required
             />
+            {usernameError && <p className="text-red-500 text-sm mt-1">{usernameError}</p>}
           </div>
           <div className="col-span-1">
             <label className="block text-gray-700 font-medium mb-2">Email</label>
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              onChange={handleEmailChange}
+              className={`w-full border ${emailError ? 'border-red-500' : 'border-gray-300'} p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500`}
               required
             />
+            {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
           </div>
 
           {/* Phone Number */}
@@ -162,9 +217,10 @@ function ProfilePage() {
               type="text"
               value={phoneNumber}
               onChange={handlePhoneNumberChange}
-              className="w-full border border-gray-300 p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter 10 digit number"
+              className={`w-full border ${phoneNumberError ? 'border-red-500' : 'border-gray-300'} p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500`}
             />
-            {phoneNumberError && <p className="text-red-500 text-sm">{phoneNumberError}</p>}
+            {phoneNumberError && <p className="text-red-500 text-sm mt-1">{phoneNumberError}</p>}
           </div>
         </div>
 
@@ -220,6 +276,8 @@ function ProfilePage() {
           Save Changes
         </button>
       </form>
+
+      {showAlert && <CustomAlert message={alertMessage} onClose={closeAlert} />}
     </div>
   );
 }

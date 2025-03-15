@@ -15,7 +15,12 @@ const cartSchema = new mongoose.Schema({
       quantity: 
       { type: Number,
         default: 1 
-      }
+      },
+      artworkType: {
+        type: String,
+        enum: ['original', 'print'],
+        required: true
+      },
     }
   ]
 });

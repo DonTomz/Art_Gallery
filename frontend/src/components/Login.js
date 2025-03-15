@@ -25,7 +25,7 @@ function Login({ show, handleClose, openRegisterModal }) {
     e.preventDefault();
     try {
       console.log("Sending request with data:", formData);
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
+      const response = await axios.post('https://art-gallery-kmgs.onrender.com/api/auth/login', {
         email: formData.email,
         password: formData.password
       });
@@ -68,7 +68,7 @@ function Login({ show, handleClose, openRegisterModal }) {
 
   // const handleGoogleLoginSuccess = async (response) => {
   //   try {
-  //     const result = await axios.post('http://localhost:5000/api/auth/google-login', {
+  //     const result = await axios.post('https://art-gallery-kmgs.onrender.com/api/auth/google-login', {
   //       token: response.tokenId, // Send Google token to your backend
   //     });
   
@@ -86,7 +86,7 @@ function Login({ show, handleClose, openRegisterModal }) {
       const decoded = jwtDecode(credentialResponse?.credential);
       console.log("Google User Details: ", decoded);
   
-      const response = await axios.post('http://localhost:5000/api/auth/google-login', {
+      const response = await axios.post('https://art-gallery-kmgs.onrender.com/api/auth/google-login', {
         token: credentialResponse.credential
       });
   
@@ -117,59 +117,68 @@ function Login({ show, handleClose, openRegisterModal }) {
 
   
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-gray-50 bg-opacity-20 backdrop-blur-lg z-50">
-    <div className="bg-white bg-opacity-20 p-6 rounded-lg w-98 flex flex-col items-center relative backdrop-blur-md shadow-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500-  z-60">
-      <span className="absolute top-2 right-2 text-black text-2xl font-bold cursor-pointer hover:text-red-500" onClick={handleClose}>&times;</span>
-      <div className="flex justify-center items-center w-full bg-cover bg-center">
-        <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-lg shadow-md flex overflow-hidden">
-          <div className="bg-black bg-opacity-10 text-white p-12 w-72">
-            <h2 className="text-black text-2xl mb-6 font-bold">LOGIN</h2>
-            <form onSubmit={handleSubmit} className="flex flex-col">
-              <input
-                id='email'
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="p-2 mb-3 rounded text-black"
-              />
-              <input 
-                id='password'
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="p-2 mb-1 rounded text-black"
-              />
-              <p className="font-thin text-[12px] text-right underline hover:underline-offset-1" onClick={() => { handleClose(); navigate('/forgot-password'); }}>forgot password?</p>
-              <button id='loginb' type="submit" className="p-2 bg-black text-white rounded hover:bg-gray-800 transition-colors">Login</button>
-            </form>
-            <div className="mt-4">
-              <GoogleLogin
-                onSuccess={handleGoogleLoginSuccess} 
-                onError={() => {
-                  console.log('Google Login Failed');
-                }}
-              />
+    <div className="fixed inset-0 flex justify-center items-center bg-gray-50 bg-opacity-20 backdrop-blur-lg z-50 p-4">
+      <div className="bg-white bg-opacity-20 p-4 sm:p-6 rounded-lg w-full sm:w-98 flex flex-col items-center relative backdrop-blur-md shadow-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 z-60">
+        <span className="absolute top-2 right-2 text-black text-2xl font-bold cursor-pointer hover:text-red-500" onClick={handleClose}>&times;</span>
+        <div className="flex justify-center items-center w-full bg-cover bg-center">
+          <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-lg shadow-md flex flex-col sm:flex-row overflow-hidden">
+            {/* Login Section */}
+            <div className="bg-black bg-opacity-10 text-white p-6 sm:p-12 w-full sm:w-72">
+              <h2 className="text-black text-xl sm:text-2xl mb-4 sm:mb-6 font-bold">LOGIN</h2>
+              <form onSubmit={handleSubmit} className="flex flex-col">
+                <input
+                  id='email'
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="p-2 mb-3 rounded text-black w-full"
+                />
+                <input 
+                  id='password'
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className="p-2 mb-1 rounded text-black w-full"
+                />
+                <p className="font-thin text-[12px] text-right underline hover:underline-offset-1 mb-2" 
+                  onClick={() => { handleClose(); navigate('/forgot-password'); }}>
+                  forgot password?
+                </p>
+                <button id='loginb' type="submit" 
+                  className="p-2 bg-black text-white rounded hover:bg-gray-800 transition-colors w-full">
+                  Login
+                </button>
+              </form>
+              <div className="mt-4 flex justify-center">
+                <GoogleLogin
+                  onSuccess={handleGoogleLoginSuccess} 
+                  onError={() => {
+                    console.log('Google Login Failed');
+                  }}
+                />
+              </div>
             </div>
-          </div>
-          <div className="bg-white bg-opacity-10 p-12 text-white w-72">
-            <h2 className="text-black text-2xl">Not a Member?</h2>
-            <p className="text-black">Sign Up NOW!</p>
-            <button
-              className="mt-6 p-2 w-32 bg-black text-white rounded hover:bg-gray-800 transition-colors"
-              onClick={() => { handleClose(); openRegisterModal(); }}> Sign Up
-            </button>
+
+            {/* Sign Up Section */}
+            <div className="bg-white bg-opacity-10 p-6 sm:p-12 text-white w-full sm:w-72 flex flex-col items-center sm:items-start">
+              <h2 className="text-black text-xl sm:text-2xl">Not a Member?</h2>
+              <p className="text-black">Sign Up NOW!</p>
+              <button
+                className="mt-4 sm:mt-6 p-2 w-32 bg-black text-white rounded hover:bg-gray-800 transition-colors"
+                onClick={() => { handleClose(); openRegisterModal(); }}>
+                Sign Up
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  
   );
 }
 

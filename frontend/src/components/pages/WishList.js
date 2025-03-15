@@ -9,7 +9,7 @@ function WishlistPage() {
   const fetchWishlist = async () => {
     try {
       const userId = localStorage.getItem('userId'); // Assuming user ID is stored in localStorage
-      const response = await axios.get(`http://localhost:5000/api/artworks/wishlist/${userId}`);
+      const response = await axios.get(`https://art-gallery-kmgs.onrender.com/api/artworks/wishlist/${userId}`);
       setWishlist(response.data.wishlist);
     } catch (error) {
       console.error('Error fetching wishlist', error);
@@ -23,7 +23,7 @@ function WishlistPage() {
   const handleRemoveFromWishlist = async (artworkId) => {
     try {
       const userId = localStorage.getItem('userId');
-      const response = await axios.post('http://localhost:5000/api/artworks/wishlist/remove', {
+      const response = await axios.post('https://art-gallery-kmgs.onrender.com/api/artworks/wishlist/remove', {
         userId: userId,
         artworkId: artworkId
       });
@@ -44,7 +44,7 @@ function WishlistPage() {
   const moveToCart = async (artworkId) => {
     try {
       const userId = localStorage.getItem('userId');
-      await axios.post('http://localhost:5000/api/artworks/cart/add', {
+      await axios.post('https://art-gallery-kmgs.onrender.com/api/artworks/cart/add', {
         userId: userId,
         artworkId: artworkId,
       });

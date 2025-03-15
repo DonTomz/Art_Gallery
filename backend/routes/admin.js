@@ -2,8 +2,12 @@ const express = require('express');
 const User = require('../models/User');
 const Artwork = require('../models/Artwork')
 const Category = require('../models/Category')
+const cors = require('cors');
 
 const router = express.Router();
+
+router.use(cors());
+router.use(express.json());
 
 // Get all users and artists based on role
 router.get('/users', async (req, res) => {
@@ -116,7 +120,6 @@ router.put('/artworks/togglehomepage/:id', async (req, res) => {
 router.get('/categories', async (req, res) => {
   try {
     const categories = await Category.find();
-    console.log(categories);  
     res.json(categories);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching categories', error });
@@ -143,6 +146,17 @@ router.delete('/category/:id', async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error deleting category', error });
   }
+});
+
+// Sample route to fetch delivery boys
+router.get('/delivery-boys', async (req, res) => {
+    try {
+        // Fetch users with the role of 'delivery'
+        const deliveryBoys = await User.find({ role: 'delivery' });
+        res.json(deliveryBoys);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching delivery boys', error });
+    }
 });
 
 module.exports = router;
