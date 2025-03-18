@@ -240,6 +240,18 @@ function DeliveryManagement() {
     setTimeout(() => setShowAlert(false), 3000);
   };
 
+  const getStatusOrder = (status) => {
+    const orderMap = {
+      'Not Shipped': 1,
+      'Picked up': 2,
+      'In Transit': 3,
+      'Out for Delivery': 4,
+      'Delivered': 5,
+      'Returned': 6
+    };
+    return orderMap[status] || 999;
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-8">
       <div className="container mx-auto px-4">
@@ -302,105 +314,94 @@ function DeliveryManagement() {
                 </div>
               ))
             ) : (
-              <>
-                {activeTab === 'my-deliveries' && myDeliveries.length > 0 && (
-                  <div className="mb-4 bg-white rounded-lg shadow p-4">
-                    <h3 className="text-lg font-semibold mb-2">Bulk Actions</h3>
-                    <div className="flex gap-2">
-                      <select
-                        className="p-2 border rounded flex-1"
-                        onChange={(e) => setPendingBulkStatus(e.target.value)}
-                        value={pendingBulkStatus}
-                      >
-                        <option value="" disabled>Update Selected Orders</option>
-                        {Array.from(new Set(
-                          Array.from(selectedDeliveries)
-                            .map(orderId => myDeliveries.find(o => o._id === orderId))
-                            .map(order => getAvailableStatuses(order.deliveryStatus))
-                            .flat()
-                        )).map(status => (
-                          <option key={status} value={status}>
-                            Mark as {status}
-                          </option>
-                        ))}
-                      </select>
-                      {pendingBulkStatus && selectedDeliveries.size > 0 && (
-                        <button
-                          onClick={() => updateMultipleDeliveryStatus(pendingBulkStatus)}
-                          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                        >
-                          Save All
-                        </button>
-                      )}
-                      <span className="text-gray-600">
-                        {selectedDeliveries.size} orders selected
-                      </span>
-                    </div>
-                    {pendingBulkStatus && selectedDeliveries.size > 0 && (
-                      <p className="text-sm text-orange-500 mt-1">
-                        * Click Save All to apply the status changes
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {myDeliveries.map(order => (
-                    <div key={order._id} className="bg-white rounded-lg shadow p-6">
-                      <div className="flex items-center mb-2">
-                        <input
-                          type="checkbox"
-                          checked={selectedDeliveries.has(order._id)}
-                          onChange={() => toggleOrderSelection(order._id)}
-                          className="mr-2"
-                        />
-                        <h3 className="text-lg font-semibold">Order #{order._id.slice(-6)}</h3>
-                      </div>
-                      <div className="mb-4">
-                        <p className="text-gray-600">Customer: {order.userName}</p>
-                        <p className="text-gray-600">Address: {order.address}</p>
-                        <p className="text-gray-600">Phone: {order.phoneNumber}</p>
-                        <p className="text-gray-600">Current Status: {order.deliveryStatus}</p>
-                      </div>
-                      <div className="mb-4">
-                        <div className="flex items-center gap-2">
-                          <select
-                            value={pendingStatusUpdates[order._id] || order.deliveryStatus}
-                            onChange={(e) => handleStatusSelection(order._id, e.target.value)}
-                            className="flex-1 p-2 border rounded"
+              <div className="space-y-6">
+                {/* Active Deliveries */}
+                <div className="bg-white rounded-lg shadow p-4">
+                  <h2 className="text-xl font-semibold mb-4">Active Deliveries</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {myDeliveries
+                      .filter(order => !['Delivered', 'Returned'].includes(order.deliveryStatus))
+                      .sort((a, b) => getStatusOrder(a.deliveryStatus) - getStatusOrder(b.deliveryStatus))
+                      .map(order => (
+                        <div key={order._id} className="bg-gray-50 rounded-lg shadow p-6">
+                          <h3 className="text-lg font-semibold mb-2">Order #{order._id.slice(-6)}</h3>
+                          <div className="mb-4">
+                            <p className="text-gray-600">Customer: {order.userName}</p>
+                            <p className="text-gray-600">Address: {order.address}</p>
+                            <p className="text-gray-600">Phone: {order.phoneNumber}</p>
+                            <p className="font-medium text-blue-600">Current Status: {order.deliveryStatus}</p>
+                          </div>
+                          <div className="mb-4">
+                            <div className="flex items-center gap-2">
+                              <select
+                                value={pendingStatusUpdates[order._id] || order.deliveryStatus}
+                                onChange={(e) => handleStatusSelection(order._id, e.target.value)}
+                                className="flex-1 p-2 border rounded"
+                              >
+                                <option value={order.deliveryStatus}>{order.deliveryStatus}</option>
+                                {getAvailableStatuses(order.deliveryStatus).map(status => (
+                                  <option key={status} value={status}>
+                                    {status}
+                                  </option>
+                                ))}
+                              </select>
+                              {pendingStatusUpdates[order._id] && (
+                                <button
+                                  onClick={() => updateDeliveryStatus(order._id)}
+                                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                                >
+                                  Save
+                                </button>
+                              )}
+                            </div>
+                            {pendingStatusUpdates[order._id] && (
+                              <p className="text-sm text-orange-500 mt-1">
+                                * Click Save to apply the status change
+                              </p>
+                            )}
+                          </div>
+                          <Link
+                            to={`/order-tracking/${order._id}`}
+                            className="block w-full text-center bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors mt-2"
                           >
-                            <option value={order.deliveryStatus}>{order.deliveryStatus}</option>
-                            {getAvailableStatuses(order.deliveryStatus).map(status => (
-                              <option key={status} value={status}>
-                                {status}
-                              </option>
-                            ))}
-                          </select>
-                          {pendingStatusUpdates[order._id] && (
-                            <button
-                              onClick={() => updateDeliveryStatus(order._id)}
-                              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                            >
-                              Save
-                            </button>
-                          )}
+                            View Tracking Details
+                          </Link>
                         </div>
-                        {pendingStatusUpdates[order._id] && (
-                          <p className="text-sm text-orange-500 mt-1">
-                            * Click Save to apply the status change
-                          </p>
-                        )}
-                      </div>
-                      <Link
-                        to={`/order-tracking/${order._id}`}
-                        className="block w-full text-center bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors mt-2"
-                      >
-                        View Tracking Details
-                      </Link>
-                    </div>
-                  ))}
+                      ))}
+                  </div>
                 </div>
-              </>
+
+                {/* Completed Deliveries */}
+                <div className="bg-white rounded-lg shadow p-4">
+                  <h2 className="text-xl font-semibold mb-4">Completed Deliveries</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {myDeliveries
+                      .filter(order => ['Delivered', 'Returned'].includes(order.deliveryStatus))
+                      .sort((a, b) => getStatusOrder(a.deliveryStatus) - getStatusOrder(b.deliveryStatus))
+                      .map(order => (
+                        <div key={order._id} className="bg-gray-50 rounded-lg shadow p-6">
+                          <h3 className="text-lg font-semibold mb-2">Order #{order._id.slice(-6)}</h3>
+                          <div className="mb-4">
+                            <p className="text-gray-600">Customer: {order.userName}</p>
+                            <p className="text-gray-600">Address: {order.address}</p>
+                            <p className="text-gray-600">Phone: {order.phoneNumber}</p>
+                            <p className={`font-medium ${
+                              order.deliveryStatus === 'Delivered' ? 'text-green-600' : 'text-red-600'
+                            }`}>
+                              Status: {order.deliveryStatus}
+                            </p>
+                          </div>
+                          <Link
+                            to={`/order-tracking/${order._id}`}
+                            className="block w-full text-center bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors mt-2"
+                          >
+                            View Tracking Details
+                          </Link>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         )}

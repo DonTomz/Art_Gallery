@@ -23,7 +23,7 @@ import ArtistArtworks from './components/ArtistArtworks';
 import CheckoutPage from './components/pages/Checkout';
 import SuccessPage from './components/pages/Success';
 import MyOrdersPage from './components/pages/MyOrders';
-// import WhatsAppChat from './components/WhatsAppChat';
+import WhatsAppChat from './components/WhatsAppChat';
 import ARViewer from './components/pages/ARViewer';
 import DeliveryAgent from './components/pages/DeliveryAgent';
 import OrderTracking from './components/pages/OrderTracking';
@@ -84,7 +84,7 @@ function App() {
           </Routes>
         </main>
         <Footer />
-        {/* <WhatsAppChat/> */}
+        <WhatsAppChat/>
         <Login show={showLoginModal} handleClose={closeLoginModal} openRegisterModal={openRegisterModal} />
         <Register show={showRegisterModal} handleClose={closeRegisterModal} openLoginModal={openLoginModal} />
         

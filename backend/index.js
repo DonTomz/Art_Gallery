@@ -10,6 +10,7 @@ const usersRoutes =require('./routes/users');
 const paymentRoutes = require('./routes/payment')
 const uploadRoutes = require('./routes/upload')
 const orderRoutes = require('./routes/orders');
+const reviewRoutes = require('./routes/reviews');
 
 const path =require('path');
 const fs = require('fs');
@@ -51,6 +52,7 @@ app.use('/api/users', usersRoutes)
 app.use('/api/payment', paymentRoutes);
 app.use('/api/upload',uploadRoutes)
 app.use('/api/orders', orderRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Add a test route to verify Express is working
 app.get('/test', (req, res) => {

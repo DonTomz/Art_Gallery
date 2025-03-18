@@ -1,39 +1,63 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CustomAlert from '../CustomAlert';
 
 function CartPage() {
   const [cartItems, setCartItems] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const userId = localStorage.getItem('userId');
   const navigate = useNavigate();
+  // Alert state
+  const [alert, setAlert] = useState({
+    show: false,
+    message: '',
+    type: 'info'
+  });
 
+  // Show alert function
+  const showAlert = (message, type = 'info') => {
+    setAlert({
+      show: true,
+      message,
+      type
+    });
+    
+    // Auto hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert(prev => ({ ...prev, show: false }));
+    }, 3000);
+  };
 
-      // Fetch cart details from backend, wrapped in useCallback to prevent re-creation on every render
-      const fetchCart = useCallback(async () => {
-        try {
-          const response = await fetch(`https://art-gallery-kmgs.onrender.com/api/artworks/cart/${userId}`);
-          if (response.ok) {
-            const cartData = await response.json();
-            setCartItems(cartData.items);
-            calculateTotal(cartData.items);
-          } else {
-            alert('Error fetching cart details');
-          }
-        } catch (error) {
-          console.error('Error fetching cart:', error); 
-        }
-      }, [userId]);
+  // Hide alert function
+  const hideAlert = () => {
+    setAlert(prev => ({ ...prev, show: false }));
+  };
+
+  // Fetch cart details from backend, wrapped in useCallback to prevent re-creation on every render
+  const fetchCart = useCallback(async () => {
+    try {
+      const response = await fetch(`https://art-gallery-kmgs.onrender.com/api/artworks/cart/${userId}`);
+      if (response.ok) {
+        const cartData = await response.json();
+        setCartItems(cartData.items);
+        calculateTotal(cartData.items);
+      } else {
+        showAlert('Error fetching cart details', 'error');
+      }
+    } catch (error) {
+      console.error('Error fetching cart:', error); 
+      showAlert('Error connecting to server', 'error');
+    }
+  }, [userId]);
 
   useEffect(() => {
     if (!userId) {
-      alert("You must be logged in to view your cart.");
+      showAlert("You must be logged in to view your cart.", 'error');
       navigate('/'); // Redirect if not logged in
       return;
     }
     fetchCart();
   }, [userId, navigate, fetchCart]);
-
-
 
   // Function to calculate total amount
   const calculateTotal = (items) => {
@@ -63,20 +87,18 @@ function CartPage() {
         // Update the cart items and total amount without refreshing
         setCartItems(updatedCart.items);
         calculateTotal(updatedCart.items);
-        
+        showAlert('Quantity updated successfully', 'success');
         console.log('Quantity updated successfully');
       } else {
         const errorData = await response.json();
         console.error('Error updating quantity:', errorData.message);
-        alert(`Error: ${errorData.message}`);
+        showAlert(`Error: ${errorData.message}`, 'error');
       }
     } catch (error) {
       console.error('Error updating quantity:', error);
-      alert('Error updating quantity');
+      showAlert('Error updating quantity', 'error');
     }
   };
-  
-
   
   // Handle remove item from cart
   const handleRemoveItem = async (artworkId) => {
@@ -91,13 +113,14 @@ function CartPage() {
         const updatedCart = await response.json();
         setCartItems(updatedCart.items);
         calculateTotal(updatedCart.items);
-        alert('Item removed from cart');
+        showAlert('Item removed from cart', 'success');
         fetchCart();
       } else {
-        alert('Error removing item');
+        showAlert('Error removing item', 'error');
       }
     } catch (error) {
       console.error('Error removing item:', error);
+      showAlert('Error connecting to server', 'error');
     }
   };
 
@@ -105,9 +128,15 @@ function CartPage() {
     navigate('/checkout', { state: { cartItems, totalAmount } });
   };
   
-
   return (
     <div className="container mx-auto py-10">
+      {alert.show && (
+        <CustomAlert
+          message={alert.message}
+          type={alert.type}
+          onClose={hideAlert}
+        />
+      )}
       <h1 className="text-3xl font-bold mb-5">Your Cart</h1>
   
       {cartItems.length === 0 ? (
@@ -200,10 +229,6 @@ function CartPage() {
       )}
     </div>
   );
-  
-  
-  
-  
 }
 
 export default CartPage;

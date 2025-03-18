@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+  import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import useAuth from '../useAuth';
 import CustomAlert from '../CustomAlert';
@@ -21,6 +21,7 @@ function ProfilePage() {
   const [emailError, setEmailError] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const [showDocViewer, setShowDocViewer] = useState(false);
 
   const userId = localStorage.getItem('userId');
 
@@ -160,6 +161,12 @@ function ProfilePage() {
     setShowAlert(false);
   };
 
+  const toggleDocViewer = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowDocViewer(!showDocViewer);
+  };
+
   return (
     <div className="container mx-auto p-8">
       <h1 className="text-4xl font-semibold mb-8 text-gray-800">Profile</h1>
@@ -239,15 +246,52 @@ function ProfilePage() {
             <div className="mb-4">
               <label className="block text-gray-700 font-medium mb-2">Upload Documentation (PDF only)</label>
               {currentArtistDocument && (
-                <div className="mb-2">
-                  <a
-                    href={currentArtistDocument}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
+                <div className="mb-4">
+                  <button
+                    type="button"
+                    onClick={toggleDocViewer}
+                    className="text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors"
                   >
-                    View Current Documentation
-                  </a>
+                    {showDocViewer ? 'Hide Document' : 'View Document'}
+                  </button>
+                  
+                  {showDocViewer && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
+                      <div className="bg-white rounded-lg w-full max-w-4xl h-[80vh] flex flex-col">
+                        <div className="flex justify-between items-center p-4 border-b">
+                          <h3 className="text-lg font-semibold">Artist Documentation</h3>
+                          <button
+                            type="button"
+                            onClick={toggleDocViewer}
+                            className="text-gray-500 hover:text-gray-700"
+                          >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                        <div className="flex-1 p-4 bg-gray-100">
+                          <object
+                            data={currentArtistDocument}
+                            type="application/pdf"
+                            className="w-full h-full"
+                          >
+                            <div className="text-center p-4">
+                              <p>Unable to display PDF file. </p>
+                              <a 
+                                href={currentArtistDocument}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:underline"
+                              >
+                                Click here to open the PDF
+                              </a>
+                            </div>
+                          </object>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
               <input

@@ -1,6 +1,5 @@
 import React from 'react';
-import { FaExclamationTriangle } from 'react-icons/fa';
-import { FaTimes } from 'react-icons/fa';
+import { FaExclamationTriangle, FaCheckCircle, FaTimes } from 'react-icons/fa';
 
 const CustomAlert = ({ message, onClose, type = 'info' }) => {
   const alertStyles = {
@@ -31,8 +30,11 @@ const CustomAlert = ({ message, onClose, type = 'info' }) => {
       >
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center">
-            <FaExclamationTriangle className={`text-2xl mr-2 ${textColor}`} />
-            <h2 className={`text-lg font-semibold ${textColor}`}>Alert</h2>
+            {type === 'error' ? (
+              <FaExclamationTriangle className={`text-2xl mr-2 ${textColor}`} />
+            ) : (
+              <FaCheckCircle className={`text-2xl mr-2 ${textColor}`} />
+            )}
           </div>
           <FaTimes 
             onClick={onClose} 

@@ -1,10 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import CustomAlert from '../CustomAlert';
 
 function WishlistPage() {
   const [wishlist, setWishlist] = useState([]);
   const navigate = useNavigate();
+  // Alert state
+  const [alert, setAlert] = useState({
+    show: false,
+    message: '',
+    type: 'info'
+  });
+
+  // Show alert function
+  const showAlert = (message, type = 'info') => {
+    setAlert({
+      show: true,
+      message,
+      type
+    });
+    
+    // Auto hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert(prev => ({ ...prev, show: false }));
+    }, 3000);
+  };
+
+  // Hide alert function
+  const hideAlert = () => {
+    setAlert(prev => ({ ...prev, show: false }));
+  };
 
   const fetchWishlist = async () => {
     try {
@@ -13,6 +39,7 @@ function WishlistPage() {
       setWishlist(response.data.wishlist);
     } catch (error) {
       console.error('Error fetching wishlist', error);
+      showAlert('Error fetching wishlist', 'error');
     }
   };
 
@@ -29,17 +56,16 @@ function WishlistPage() {
       });
   
       if (response.status === 200) {
-        alert('Artwork removed from wishlist');
+        showAlert('Artwork removed from wishlist', 'success');
         // Optionally refresh the wishlist to reflect changes
         fetchWishlist(); // Re-fetch the wishlist to update the UI
       }
     } catch (error) {
       console.error('Error removing from wishlist', error);
-      alert('Error removing artwork from wishlist');
+      showAlert('Error removing artwork from wishlist', 'error');
     }
   };
   
-
   // Function to move an artwork from wishlist to cart
   const moveToCart = async (artworkId) => {
     try {
@@ -51,16 +77,25 @@ function WishlistPage() {
 
       // Optionally, remove the item from the wishlist after moving to the cart
       setWishlist(wishlist.filter((artwork) => artwork._id !== artworkId));
+      showAlert('Item added to cart successfully', 'success');
 
       // Navigate to the cart page
       navigate('/cart');
     } catch (error) {
       console.error('Error moving item to cart', error);
+      showAlert('Error adding item to cart', 'error');
     }
   };
 
   return (
     <div className="wishlist-page container mx-auto py-12">
+      {alert.show && (
+        <CustomAlert
+          message={alert.message}
+          type={alert.type}
+          onClose={hideAlert}
+        />
+      )}
       <h2 className="text-4xl font-extrabold text-center text-gray-900 mb-10">Your Wishlist</h2>
   
       {wishlist.length === 0 ? (
@@ -105,8 +140,6 @@ function WishlistPage() {
       )}
     </div>
   );
-  
-  
 }
 
 export default WishlistPage;

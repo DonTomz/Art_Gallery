@@ -10,6 +10,14 @@ const artworkSchema = new mongoose.Schema({
   artistId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   imageUrl: { type: [String], required: true }, // Store multiple image URLs
   show: { type: Boolean, default: true },
+  averageRating: {
+    type: Number,
+    default: 0
+  },
+  reviewCount: {
+    type: Number,
+    default: 0
+  }
 });
 
 module.exports = mongoose.model("Artwork", artworkSchema);

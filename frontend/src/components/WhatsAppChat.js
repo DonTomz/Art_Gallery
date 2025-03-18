@@ -3,7 +3,7 @@ import React from 'react';
 const WhatsAppChat = () => {
     return (
         <a 
-            href="https://wa.me/919560345078" 
+            href="https://wa.me/917736690900" 
             target="_blank" 
             rel="noopener noreferrer" 
             style={{
