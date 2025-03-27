@@ -23,11 +23,11 @@ import ArtistArtworks from './components/ArtistArtworks';
 import CheckoutPage from './components/pages/Checkout';
 import SuccessPage from './components/pages/Success';
 import MyOrdersPage from './components/pages/MyOrders';
-import WhatsAppChat from './components/WhatsAppChat';
-import ARViewer from './components/pages/ARViewer';
+// import WhatsAppChat from './components/WhatsAppChat';
 import DeliveryAgent from './components/pages/DeliveryAgent';
 import OrderTracking from './components/pages/OrderTracking';
 import DeliveryManagement from './components/pages/DeliveryManagement';
+import Chatbot from './components/Chatbot';
 
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -76,7 +76,6 @@ function App() {
             <Route path='/checkout' element ={<CheckoutPage/>}/>
             <Route path="/success" element={<SuccessPage />} />
             <Route path="/myorders" element={<MyOrdersPage />} />
-            <Route path="/ar-view" element={<ARViewer />} />
             <Route path="/delivery" element={<DeliveryAgent />} />
             <Route path="/order-tracking/:orderId" element={<OrderTracking />} />
             <Route path="/my-deliveries" element={<DeliveryManagement />} />
@@ -84,10 +83,10 @@ function App() {
           </Routes>
         </main>
         <Footer />
-        <WhatsAppChat/>
+        {/* <WhatsAppChat/> */}
         <Login show={showLoginModal} handleClose={closeLoginModal} openRegisterModal={openRegisterModal} />
         <Register show={showRegisterModal} handleClose={closeRegisterModal} openLoginModal={openLoginModal} />
-        
+        <Chatbot />
       </Router>
     </div>
   );

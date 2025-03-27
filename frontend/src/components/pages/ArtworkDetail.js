@@ -21,6 +21,7 @@ function ArtworkDetail({ openModal }) {
     message: '',
     type: 'info'
   });
+  const [artworkUrl, setArtworkUrl] = useState('');
 
   useEffect(() => {
     const fetchArtwork = async () => {
@@ -31,6 +32,10 @@ function ArtworkDetail({ openModal }) {
         }
         const data = await response.json();
         setArtwork(data);
+        // Store the artwork URL when data is fetched
+        if (data.imageUrl && data.imageUrl[0]) {
+          setArtworkUrl(data.imageUrl[0]);
+        }
       } catch (error) {
         setError(error.message);
       } finally {
@@ -62,21 +67,47 @@ function ArtworkDetail({ openModal }) {
     checkWishlistStatus();
   }, [artwork]);
 
-  const getARViewerURL = (artworkUrl) => {
-    const arViewerBaseUrl = 'https://artgalleryar.netlify.app';
-    // Make sure to properly encode the Cloudinary URL
-    return `${arViewerBaseUrl}?artwork=${encodeURIComponent(artworkUrl)}`;
+  // Generate AR URL using Mind AR
+  const getARViewerURL = (imageUrl) => {
+    // This combines your AR viewer site with the artwork URL as a parameter
+    return `https://lucky-pony-05d58f.netlify.app/ar-viewer?image=${encodeURIComponent(imageUrl)}`;
+  };
+
+  // Create the AR HTML content
+  const getARHTML = (imageUrl) => {
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image.prod.js"></script>
+          <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+        </head>
+        <body>
+          <a-scene mindar-image="imageTargetSrc: ${imageUrl};" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+            <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+            <a-entity mindar-image-target="targetIndex: 0">
+              <a-plane src="${imageUrl}" position="0 0 0" height="1" width="1" rotation="0 0 0"></a-plane>
+            </a-entity>
+          </a-scene>
+        </body>
+      </html>
+    `;
   };
 
   const handleViewInAR = () => {
-    if (!artwork) return;
+    if (!artwork?.imageUrl?.[0]) {
+      console.error('No artwork URL available');
+      return;
+    }
     
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-    const arUrl = getARViewerURL(artwork.imageUrl[0]);
-    
     if (isMobile) {
-      window.location.href = arUrl;
+      // Direct to AR viewer on mobile
+      window.location.href = getARViewerURL(artwork.imageUrl[0]);
     } else {
+      // Show QR code on desktop
       setShowQRModal(true);
     }
   };
@@ -292,43 +323,49 @@ function ArtworkDetail({ openModal }) {
         </div>
       </div>
 
-      {/* Add CustomAlert */}
-      {alertConfig.show && (
-        <CustomAlert
-          message={alertConfig.message}
-          type={alertConfig.type}
-          onClose={() => setAlertConfig(prev => ({ ...prev, show: false }))}
-        />
-      )}
-
-      {/* QR Code Modal */}
-      {showQRModal && (
+      {/* Updated QR Code Modal with Image URL display */}
+      {showQRModal && artwork && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-lg max-w-md w-full">
-            <h2 className="text-2xl font-bold mb-4 text-center">View in AR</h2>
-            <p className="mb-6 text-center text-gray-600">
-              Scan this QR code with your mobile device to view the artwork in AR
-            </p>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-center flex-1">View in AR</h2>
+              <button 
+                onClick={() => setShowQRModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Show artwork preview */}
+            <div className="mb-4">
+              <img 
+                src={artwork.imageUrl[0]} 
+                alt={artwork.title}
+                className="w-full h-48 object-contain rounded-lg"
+              />
+            </div>
+            
+            {/* Show the actual image URL */}
+            <div className="mb-4 p-2 bg-gray-100 rounded">
+              <p className="text-xs text-gray-700 break-all">
+                <strong>Image URL:</strong> {artwork.imageUrl[0]}
+              </p>
+            </div>
+            
             <div className="flex justify-center mb-6">
               <QRCodeSVG
-                value={getARViewerURL(artwork.imageUrl[0])}
+                value={`https://lucky-pony-05d58f.netlify.app/ar-viewer?image=${encodeURIComponent(artwork.imageUrl[0])}`}
                 size={256}
                 level="H"
                 includeMargin={true}
               />
             </div>
-            <div className="text-center mb-6 text-sm text-gray-500">
-              <p>1. Scan the QR code with your mobile device</p>
-              <p>2. Point your camera at this marker:</p>
-              <a 
-                href="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/HIRO.jpg"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 underline"
-              >
-                View Marker
-              </a>
+            
+            <div className="text-center mb-4 text-sm text-gray-500">
+              <p>Scan QR code to view this artwork in AR</p>
             </div>
+
             <div className="flex justify-center">
               <button
                 onClick={() => setShowQRModal(false)}
@@ -339,6 +376,15 @@ function ArtworkDetail({ openModal }) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Add CustomAlert */}
+      {alertConfig.show && (
+        <CustomAlert
+          message={alertConfig.message}
+          type={alertConfig.type}
+          onClose={() => setAlertConfig(prev => ({ ...prev, show: false }))}
+        />
       )}
     </div>
   );

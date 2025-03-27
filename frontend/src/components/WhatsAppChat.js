@@ -8,7 +8,7 @@ const WhatsAppChat = () => {
             rel="noopener noreferrer" 
             style={{
                 position: 'fixed',
-                bottom: '5px',
+                bottom: '80px',
                 right: '20px',
                 backgroundColor: '#25D366',
                 borderRadius: '45%',

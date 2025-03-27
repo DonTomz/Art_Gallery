@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Artwork Viewer</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #camera-view {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
+        .artwork {
+            position: fixed;
+            pointer-events: none;
+            transform-origin: center;
+            display: none;
+        }
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .btn:disabled {
+            background: #ccc;
+        }
+        #preview {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            background: white;
+            border-radius: 5px;
+        }
+        .warning {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+            z-index: 99;
+        }
+        .surface-indicator {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            z-index: 98;
+        }
+        .frames-container {
+            position: fixed;
+            bottom: 90px; /* Above the controls */
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+            overflow-x: auto;
+            z-index: 99;
+        }
+        .frame-preview {
+            width: 60px;
+            height: 60px;
+            border: 2px solid white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .frame-preview:hover {
+            transform: scale(1.1);
+        }
+        .frame-preview.active {
+            border-color: #4CAF50;
+            transform: scale(1.1);
+        }
+        .artwork-frame {
+            position: fixed;
+            pointer-events: none;
+            transform-origin: center;
+            display: none;
+            border: 20px solid;
+            border-image-slice: 1;
+        }
+    </style>
+</head>
+<body>
+    <video id="camera-view" autoplay playsinline></video>
+    <img id="artwork-overlay" class="artwork">
+    <div id="artwork-frame" class="artwork-frame"></div>
+    <div id="warning" class="warning">Please point to a flat wall surface</div>
+    <div id="surface-indicator" class="surface-indicator">Looking for flat surface...</div>
+    
+    <div class="frames-container" id="frames-container">
+        <!-- Classic Gold Frame -->
+        <img src="https://www.onlygfx.com/wp-content/uploads/2021/04/gold-picture-frame-1.png" 
+            class="frame-preview" 
+            data-frame="url('https://www.onlygfx.com/wp-content/uploads/2021/04/gold-picture-frame-1.png')">
+        
+        <!-- Ornate Vintage Frame -->
+        <img src="https://www.freepnglogos.com/uploads/frame-png/frame-png-transparent-golden-frame-with-ornaments-png-clipart-gallery-19.png" 
+            class="frame-preview" 
+            data-frame="url('https://www.freepnglogos.com/uploads/frame-png/frame-png-transparent-golden-frame-with-ornaments-png-clipart-gallery-19.png')">
+        
+        <!-- Simple Black Frame -->
+        <img src="https://www.freeiconspng.com/uploads/black-frame-png-10.png" 
+            class="frame-preview" 
+            data-frame="url('https://www.freeiconspng.com/uploads/black-frame-png-10.png')">
+        
+        <!-- Wooden Frame -->
+        <img src="https://www.pngarts.com/files/8/Wooden-Photo-Frame-PNG-Image.png" 
+            class="frame-preview" 
+            data-frame="url('https://www.pngarts.com/files/8/Wooden-Photo-Frame-PNG-Image.png')">
+        
+        <!-- Modern Silver Frame -->
+        <img src="https://www.pngplay.com/wp-content/uploads/6/Decorative-Silver-Frame-PNG-Free-File-Download.png" 
+            class="frame-preview" 
+            data-frame="url('https://www.pngplay.com/wp-content/uploads/6/Decorative-Silver-Frame-PNG-Free-File-Download.png')">
+
+        <!-- No Frame Option -->
+        <div class="frame-preview" style="background: white" data-frame="none">No Frame</div>
+    </div>
+    
+    <div class="controls">
+        <img id="preview">
+        <button class="btn" id="placeBtn" disabled>Place Here</button>
+        <button class="btn" id="sizeBtn">Adjust Size</button>
+    </div>
+
+    <script>
+        const artworkUrl = decodeURIComponent(new URLSearchParams(window.location.search).get('image'));
+        let isPlaced = false;
+        let currentScale = 1;
+        let isFlatSurface = false;
+
+        // Start camera and motion sensors
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: window.innerWidth },
+                        height: { ideal: window.innerHeight }
+                    }
+                });
+                const video = document.getElementById('camera-view');
+                video.srcObject = stream;
+
+                // Start surface detection
+                if (window.DeviceOrientationEvent) {
+                    window.addEventListener('deviceorientation', detectSurface);
+                }
+            } catch (err) {
+                console.error('Camera access failed:', err);
+                alert('Please enable camera access');
+            }
+        }
+
+        // Detect if surface is flat using device orientation
+        function detectSurface(event) {
+            const beta = event.beta; // Front-back tilt
+            const gamma = event.gamma; // Left-right tilt
+            
+            // Check if camera is roughly parallel to a wall (90 degrees)
+            const isFacingWall = Math.abs(beta) < 20 && Math.abs(gamma) < 20;
+            
+            const warning = document.getElementById('warning');
+            const placeBtn = document.getElementById('placeBtn');
+            const surfaceIndicator = document.getElementById('surface-indicator');
+            const artwork = document.getElementById('artwork-overlay');
+
+            if (isFacingWall) {
+                isFlatSurface = true;
+                warning.style.display = 'none';
+                placeBtn.disabled = false;
+                surfaceIndicator.textContent = 'Flat surface detected ✓';
+                surfaceIndicator.style.background = 'rgba(76, 175, 80, 0.7)';
+            } else {
+                isFlatSurface = false;
+                warning.style.display = 'block';
+                placeBtn.disabled = true;
+                surfaceIndicator.textContent = 'Looking for flat surface...';
+                surfaceIndicator.style.background = 'rgba(0, 0, 0, 0.7)';
+                artwork.style.display = 'none';
+                isPlaced = false;
+            }
+        }
+
+        // Initialize artwork with frame
+        function initArtwork() {
+            const preview = document.getElementById('preview');
+            const artwork = document.getElementById('artwork-overlay');
+            const frame = document.getElementById('artwork-frame');
+            preview.src = artworkUrl;
+            artwork.src = artworkUrl;
+
+            artwork.onload = () => {
+                const maxWidth = window.innerWidth * 0.8;
+                const maxHeight = window.innerHeight * 0.5;
+                const scale = Math.min(
+                    maxWidth / artwork.naturalWidth,
+                    maxHeight / artwork.naturalHeight
+                );
+                const width = artwork.naturalWidth * scale;
+                
+                artwork.style.width = `${width}px`;
+                frame.style.width = `${width}px`;
+                frame.style.height = `${artwork.height}px`;
+            };
+
+            // Handle frame selection
+            const frameContainer = document.getElementById('frames-container');
+            frameContainer.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('frame-preview')) return;
+                
+                // Update active frame
+                document.querySelectorAll('.frame-preview').forEach(f => 
+                    f.classList.remove('active'));
+                e.target.classList.add('active');
+
+                // Apply frame
+                const frameStyle = e.target.dataset.frame;
+                if (frameStyle === 'none') {
+                    frame.style.display = 'none';
+                } else {
+                    frame.style.display = artwork.style.display;
+                    frame.style.left = artwork.style.left;
+                    frame.style.top = artwork.style.top;
+                    frame.style.transform = artwork.style.transform;
+                    frame.style.borderImage = frameStyle;
+                }
+            });
+        }
+
+        // Modified handleTouch to move frame with artwork
+        function handleTouch() {
+            let isDragging = false;
+            let startX, startY;
+            const artwork = document.getElementById('artwork-overlay');
+            const frame = document.getElementById('artwork-frame');
+
+            artwork.style.display = 'block';
+            artwork.style.left = '50%';
+            artwork.style.top = '50%';
+            artwork.style.transform = 'translate(-50%, -50%)';
+
+            if (frame.style.display !== 'none') {
+                frame.style.display = 'block';
+                frame.style.left = '50%';
+                frame.style.top = '50%';
+                frame.style.transform = 'translate(-50%, -50%)';
+            }
+
+            document.addEventListener('touchstart', (e) => {
+                if (!isPlaced || !isFlatSurface) return;
+                isDragging = true;
+                startX = e.touches[0].clientX - artwork.offsetLeft;
+                startY = e.touches[0].clientY - artwork.offsetTop;
+            });
+
+            document.addEventListener('touchmove', (e) => {
+                if (!isDragging || !isFlatSurface) return;
+                e.preventDefault();
+                const x = e.touches[0].clientX - startX;
+                const y = e.touches[0].clientY - startY;
+                
+                artwork.style.left = `${x}px`;
+                artwork.style.top = `${y}px`;
+                artwork.style.transform = 'none';
+
+                if (frame.style.display !== 'none') {
+                    frame.style.left = `${x}px`;
+                    frame.style.top = `${y}px`;
+                    frame.style.transform = 'none';
+                }
+            });
+
+            document.addEventListener('touchend', () => {
+                isDragging = false;
+            });
+        }
+
+        // Modified size adjustment to include frame
+        document.getElementById('sizeBtn').onclick = () => {
+            if (!isPlaced || !isFlatSurface) return;
+            currentScale += 0.2;
+            if (currentScale > 2) currentScale = 0.5;
+            
+            const artwork = document.getElementById('artwork-overlay');
+            const frame = document.getElementById('artwork-frame');
+            
+            artwork.style.scale = currentScale;
+            if (frame.style.display !== 'none') {
+                frame.style.scale = currentScale;
+            }
+        };
+
+        // Initialize
+        window.onload = () => {
+            startCamera();
+            initArtwork();
+
+            document.getElementById('placeBtn').onclick = () => {
+                if (!isFlatSurface) return;
+                isPlaced = true;
+                const artwork = document.getElementById('artwork-overlay');
+                artwork.style.display = 'block';
+                handleTouch();
+            };
+        };
+    </script>
+</body>
+</html>
